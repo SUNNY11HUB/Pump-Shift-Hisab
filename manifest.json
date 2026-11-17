@@ -2,7 +2,7 @@
   "id": "/Pump-Shift-Hisab/",
   "name": "पंप शिफ्ट हिसाब",
   "short_name": "पंप हिसाब",
-  "description": "Fuel Pump Shift Sales & Cash Reconciliation Calculator",
+  "description": "Fuel Pump Shift Sales, Testing & Cash Reconciliation Calculator",
   "start_url": "/Pump-Shift-Hisab/",
   "scope": "/Pump-Shift-Hisab/",
   "display": "standalone",

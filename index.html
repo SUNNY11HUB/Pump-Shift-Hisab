@@ -7,645 +7,2135 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>पंप शिफ्ट हिसाब</title>
+  <meta name="apple-mobile-web-app-title" content="पंप हिसाब" />
+  <title>पंप शिफ्ट हिसाब - Fuel Shift Hisab</title>
+
+  <!-- Static PWA Manifest & App Icons (Required for Android WebAPK Install) -->
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="icon-512.png" />
   <link rel="apple-touch-icon" href="icon-512.png" />
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --card-2: #0b1220;
-      --border: #334155;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #f97316;
-      --accent-dark: #ea580c;
-      --green: #10b981;
-      --red: #ef4444;
-      --blue: #38bdf8;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 12px 12px 90px;
-      -webkit-tap-highlight-color: transparent;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      margin-bottom: 10px;
-    }
-    .brand { display: flex; align-items: center; gap: 10px; }
-    .brand-icon {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: linear-gradient(135deg, #f97316, #ea580c);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 18px; color: #fff;
-    }
-    .brand h1 { font-size: 17px; font-weight: 700; line-height: 1.2; }
-    .brand p { font-size: 11px; color: var(--muted); }
-    #open-submenu-btn {
-      width: 44px; height: 44px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 4px; cursor: pointer;
-    }
-    #open-submenu-btn span {
-      display: block; width: 20px; height: 2px;
-      background: var(--text); border-radius: 2px;
-    }
-    #install-banner {
-      display: none;
-      align-items: center; justify-content: space-between;
-      background: linear-gradient(90deg, #1e293b, #0f172a);
-      border: 1px solid var(--accent);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-    }
-    #install-banner span { font-size: 13px; font-weight: 600; }
-    #install-btn {
-      background: var(--accent); color: #fff; border: none;
-      padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;
-    }
-    .rate-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--card-2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; font-size: 12px;
-    }
-    .rate-bar strong { color: var(--accent); }
-    .rate-bar button {
-      background: none; border: none; color: var(--blue); font-size: 12px; font-weight: 600; cursor: pointer;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-    .card-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
-    }
-    .card-title { font-size: 13px; font-weight: 700; letter-spacing: 0.3px; display: flex; align-items: center; gap: 6px; }
-    .badge {
-      background: var(--accent); color: #fff; font-size: 11px;
-      width: 20px; height: 20px; border-radius: 6px;
-      display: inline-flex; align-items: center; justify-content: center; font-weight: 800;
-    }
-    .rate-tag { font-size: 12px; color: var(--green); font-weight: 700; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-    input[type="number"], input[type="text"], select {
-      width: 100%; background: var(--card-2); border: 1px solid var(--border);
-      color: var(--text); padding: 9px 10px; border-radius: 8px;
-      font-size: 15px; font-weight: 600; outline: none;
-    }
-    input:focus { border-color: var(--accent); }
-    .testing-row {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 8px; gap: 8px;
-    }
-    .testing-row label { font-size: 12px; color: var(--muted); white-space: nowrap; }
-    .preset-group { display: flex; gap: 6px; align-items: center; }
-    .preset-btn {
-      background: var(--card-2); border: 1px solid var(--border); color: var(--text);
-      padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
-    }
-    .preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .testing-input { width: 70px !important; text-align: center; padding: 6px !important; font-size: 14px !important; }
-    .metrics {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-      margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border);
-      text-align: center;
-    }
-    .metric span { display: block; font-size: 10px; color: var(--muted); }
-    .metric strong { font-size: 12px; color: var(--text); }
-    .metric.highlight strong { color: var(--green); font-size: 13px; }
-    .total-fuel-box {
-      background: var(--card-2); border: 1px solid var(--accent);
-      border-radius: 14px; padding: 12px; margin-bottom: 10px;
-    }
-    .total-fuel-top {
-      display: flex; justify-content: space-between; font-size: 12px; color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .total-fuel-main {
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .total-fuel-main span { font-size: 13px; font-weight: 700; }
-    .total-fuel-main strong { font-size: 20px; color: var(--accent); }
-    .list-row {
-      display: grid; grid-template-columns: 1fr 105px 32px; gap: 6px;
-      margin-bottom: 6px; align-items: center;
-    }
-    .add-btn {
-      background: var(--accent); color: #fff; border: none;
-      width: 26px; height: 26px; border-radius: 7px; font-size: 18px;
-      font-weight: 700; cursor: pointer; line-height: 1;
-    }
-    .del-btn {
-      background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3);
-      height: 36px; border-radius: 8px; font-weight: 700; cursor: pointer;
-    }
-    .summary-card {
-      background: linear-gradient(180deg, #1e293b 0%, #0b1220 100%);
-      border: 1px solid var(--border); border-radius: 14px; padding: 14px;
-    }
-    .sum-line {
-      display: flex; justify-content: space-between; padding: 6px 0;
-      font-size: 13px; border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-    }
-    .sum-line:last-child { border-bottom: none; }
-    .diff-banner {
-      margin-top: 10px; padding: 12px; border-radius: 10px;
-      text-align: center; font-weight: 800; font-size: 16px;
-    }
-    .diff-ok { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid var(--green); }
-    .diff-short { background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid var(--red); }
-    .diff-excess { background: rgba(56, 189, 248, 0.15); color: var(--blue); border: 1px solid var(--blue); }
-    .action-bar {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;
-    }
-    .btn {
-      padding: 11px; border-radius: 10px; border: none; font-weight: 700;
-      font-size: 13px; cursor: pointer;
-    }
-    .btn-primary { background: var(--green); color: #052e16; }
-    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
 
-    /* Submenu Modal */
-    .modal-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-      z-index: 50; align-items: flex-end; justify-content: center;
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Core Typography & Base Fallbacks (Works even if external CDNs are offline) */
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
-    .modal-backdrop.open { display: flex; }
-    .modal {
-      background: var(--card); width: 100%; max-width: 480px;
-      border-top-left-radius: 20px; border-top-right-radius: 20px;
-      padding: 18px 16px 28px; border-top: 1px solid var(--border);
-      max-height: 85vh; overflow-y: auto;
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      background-color: #e2e8f0;
+      color: #1e293b;
     }
-    .modal-head {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
-    .modal-head h2 { font-size: 16px; }
-    .close-modal {
-      background: var(--card-2); border: 1px solid var(--border); color: var(--text);
-      width: 32px; height: 32px; border-radius: 8px; font-size: 16px; cursor: pointer;
+    input[type="number"] {
+      -moz-appearance: textfield;
     }
-    .section-label { font-size: 12px; color: var(--accent); font-weight: 700; margin: 12px 0 6px; }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .hidden {
+      display: none !important;
+    }
+    /* Offline-safe layout fallback guarantees if Tailwind CDN fails to load */
+    .app-shell {
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 100vh;
+      background-color: #f8fafc;
+    }
   </style>
 </head>
-<body>
+<body class="text-slate-800 antialiased pb-10">
 
-  <header>
-    <div class="brand">
-      <div class="brand-icon">⛽</div>
-      <div>
-        <h1>पंप शिफ्ट हिसाब</h1>
-        <p>Fuel Shift Sales & Cash Hisab</p>
-      </div>
-    </div>
-    <button id="open-submenu-btn" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </header>
-
-  <div id="install-banner">
-    <span>📲 ऐप को होम स्क्रीन पर इंस्टॉल करें</span>
-    <button id="install-btn">Install</button>
-  </div>
-
-  <div class="rate-bar">
-    <div>
-      MS: <strong id="disp-rate-ms">₹100.00</strong> &nbsp;|&nbsp;
-      HSD: <strong id="disp-rate-hsd">₹92.00</strong>
-    </div>
-    <button onclick="openModal()">Edit Rates ✎</button>
-  </div>
-
-  <!-- Totalizer A -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title"><span class="badge">A</span> TOTALIZER - A (MS)</div>
-      <div class="rate-tag" id="tag-rate-a">MS - ₹100.00/L</div>
-    </div>
-    <div class="grid-2">
-      <div class="field">
-        <label>पहले का रीडिंग (Opening)</label>
-        <input type="number" step="0.01" id="open-a" placeholder="0.00" oninput="calculate()" />
-      </div>
-      <div class="field">
-        <label>बाद का रीडिंग (Closing)</label>
-        <input type="number" step="0.01" id="close-a" placeholder="0.00" oninput="calculate()" />
-      </div>
-    </div>
-    <div class="testing-row">
-      <label>टेस्टिंग (लीटर)</label>
-      <div class="preset-group">
-        <button type="button" class="preset-btn active" id="btn-test-a-0" onclick="setTesting('a', 0)">0L</button>
-        <button type="button" class="preset-btn" id="btn-test-a-5" onclick="setTesting('a', 5)">5L</button>
-        <input type="number" step="0.01" id="test-a" class="testing-input" value="0" oninput="onCustomTesting('a')" />
-      </div>
-    </div>
-    <div class="metrics">
-      <div class="metric"><span>Gross Diff</span><strong id="gross-a">0.00 L</strong></div>
-      <div class="metric"><span>(-) Testing</span><strong id="show-test-a">0.00 L</strong></div>
-      <div class="metric"><span>Net Sale</span><strong id="net-a">0.00 L</strong></div>
-      <div class="metric highlight"><span>Amount A</span><strong id="amt-a">₹0.00</strong></div>
+  <!-- Toast Notification Banner -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden transition-all duration-200 pointer-events-none">
+    <div class="bg-slate-900 text-white text-sm font-semibold px-4 py-3 rounded-full shadow-2xl border border-slate-700 flex items-center gap-2 whitespace-nowrap">
+      <span id="toast-msg">Saved</span>
     </div>
   </div>
 
-  <!-- Totalizer B -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title"><span class="badge">B</span> TOTALIZER - B (HSD)</div>
-      <div class="rate-tag" id="tag-rate-b">HSD - ₹92.00/L</div>
-    </div>
-    <div class="grid-2">
-      <div class="field">
-        <label>पहले का रीडिंग (Opening)</label>
-        <input type="number" step="0.01" id="open-b" placeholder="0.00" oninput="calculate()" />
-      </div>
-      <div class="field">
-        <label>बाद का रीडिंग (Closing)</label>
-        <input type="number" step="0.01" id="close-b" placeholder="0.00" oninput="calculate()" />
-      </div>
-    </div>
-    <div class="testing-row">
-      <label>टेस्टिंग (लीटर)</label>
-      <div class="preset-group">
-        <button type="button" class="preset-btn active" id="btn-test-b-0" onclick="setTesting('b', 0)">0L</button>
-        <button type="button" class="preset-btn" id="btn-test-b-5" onclick="setTesting('b', 5)">5L</button>
-        <input type="number" step="0.01" id="test-b" class="testing-input" value="0" oninput="onCustomTesting('b')" />
-      </div>
-    </div>
-    <div class="metrics">
-      <div class="metric"><span>Gross Diff</span><strong id="gross-b">0.00 L</strong></div>
-      <div class="metric"><span>(-) Testing</span><strong id="show-test-b">0.00 L</strong></div>
-      <div class="metric"><span>Net Sale</span><strong id="net-b">0.00 L</strong></div>
-      <div class="metric highlight"><span>Amount B</span><strong id="amt-b">₹0.00</strong></div>
-    </div>
-  </div>
+  <!-- Main Mobile-First Container -->
+  <div class="app-shell max-w-md mx-auto min-h-screen bg-slate-50 shadow-lg sm:my-4 sm:rounded-3xl sm:border sm:border-slate-300 overflow-hidden flex flex-col">
 
-  <!-- Total Fuel Summary -->
-  <div class="total-fuel-box">
-    <div class="total-fuel-top">
-      <span>Net A + Net B = Total Liter</span>
-      <strong id="total-liters">0.00 + 0.00 = 0.00 L</strong>
-    </div>
-    <div class="total-fuel-main">
-      <span>TOTAL FUEL AMOUNT (कुल फ्यूल बिक्री)</span>
-      <strong id="total-fuel-amt">₹0.00</strong>
-    </div>
-  </div>
-
-  <!-- Extra Items (Lube / Petrol Plus) -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">अन्य बिक्री (Lube / Petrol Plus)</div>
-      <button type="button" class="add-btn" onclick="addRow('extra-list')">+</button>
-    </div>
-    <div id="extra-list"></div>
-  </div>
-
-  <!-- Cash & UPI -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">नकद और ऑनलाइन (Cash & UPI)</div>
-    </div>
-    <div class="grid-2">
-      <div class="field">
-        <label>Cash (नकद ₹)</label>
-        <input type="number" step="0.01" id="cash-amt" placeholder="0" oninput="calculate()" />
-      </div>
-      <div class="field">
-        <label>UPI / PayTM / Card (₹)</label>
-        <input type="number" step="0.01" id="upi-amt" placeholder="0" oninput="calculate()" />
-      </div>
-    </div>
-  </div>
-
-  <!-- Credit Sales (उधार) -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">उधार बिक्री (Credit Given)</div>
-      <button type="button" class="add-btn" onclick="addRow('credit-list')">+</button>
-    </div>
-    <div id="credit-list"></div>
-  </div>
-
-  <!-- Credit Recovery (उधार जमा) -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">उधार जमा (Credit Recovery +)</div>
-      <button type="button" class="add-btn" onclick="addRow('recovery-list')">+</button>
-    </div>
-    <div id="recovery-list"></div>
-  </div>
-
-  <!-- Expenses (खर्च) -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">शिफ्ट खर्च (Expenses)</div>
-      <button type="button" class="add-btn" onclick="addRow('expense-list')">+</button>
-    </div>
-    <div id="expense-list"></div>
-  </div>
-
-  <!-- Final Reconciliation -->
-  <div class="summary-card">
-    <div class="sum-line"><span>कुल बिक्री (Fuel + Lube):</span><strong id="sum-sales">₹0.00</strong></div>
-    <div class="sum-line"><span>(+) पुराना उधार जमा (Recovery):</span><strong id="sum-recovery">₹0.00</strong></div>
-    <div class="sum-line"><span>कुल लेने योग्य राशि (Expected):</span><strong id="sum-expected">₹0.00</strong></div>
-    <div class="sum-line"><span>जमा हिसाब (Cash + UPI + उधार + खर्च):</span><strong id="sum-accounted">₹0.00</strong></div>
-
-    <div id="diff-banner" class="diff-banner diff-ok">हिसाब बराबर (₹0.00)</div>
-
-    <div class="action-bar">
-      <button type="button" class="btn btn-primary" onclick="copyReport()">📋 रिपोर्ट कॉपी करें</button>
-      <button type="button" class="btn btn-secondary" onclick="nextShift()">🔄 अगली शिफ्ट</button>
-    </div>
-  </div>
-
-  <!-- Submenu Modal -->
-  <div id="submenu-modal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
-    <div class="modal">
-      <div class="modal-head">
-        <h2>⚙️ सेटिंग्स (Rates & Defaults)</h2>
-        <button class="close-modal" onclick="closeModal()">✕</button>
-      </div>
-
-      <div class="section-label">आज का रेट (Fuel Rates ₹/L)</div>
-      <div class="grid-2">
-        <div class="field">
-          <label>MS (Petrol) Rate</label>
-          <input type="number" step="0.01" id="cfg-rate-ms" />
+    <!-- 1. TOP HEADER & SUBMENU TRIGGER -->
+    <header class="sticky top-0 z-30 bg-slate-900 text-white shadow-md">
+      <div class="px-4 py-3 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-extrabold text-xl shadow-inner shrink-0">
+            ⛽
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-base font-extrabold leading-tight tracking-tight truncate">पंप शिफ्ट हिसाब</h1>
+            <p class="text-[11px] text-slate-300 font-medium truncate">Fuel Shift Sales & Cash Hisab</p>
+          </div>
         </div>
-        <div class="field">
-          <label>HSD (Diesel) Rate</label>
-          <input type="number" step="0.01" id="cfg-rate-hsd" />
+
+        <!-- Submenu Button (4 Horizontal Lines Only) -->
+        <button
+          id="open-submenu-btn"
+          type="button"
+          aria-label="Open Submenu"
+          class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 transition border border-slate-700 flex items-center justify-center text-amber-400 shrink-0 cursor-pointer"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 5h16M4 9.67h16M4 14.33h16M4 19h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Active Rates Quick Strip -->
+      <div class="bg-slate-800 text-slate-200 px-4 py-1.5 text-xs flex items-center justify-between gap-2 border-t border-slate-700/80">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="inline-flex items-center gap-1.5 whitespace-nowrap">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+            <span class="text-slate-400 font-medium">MS:</span>
+            <strong id="strip-ms-rate" class="text-white tabular-nums">₹105.98</strong>
+          </span>
+          <span class="inline-flex items-center gap-1.5 whitespace-nowrap">
+            <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+            <span class="text-slate-400 font-medium">HSD:</span>
+            <strong id="strip-hsd-rate" class="text-white tabular-nums">₹101.11</strong>
+          </span>
+        </div>
+        <button
+          id="strip-edit-rates-btn"
+          type="button"
+          class="min-h-[34px] px-2.5 py-1 rounded-lg text-amber-400 hover:bg-slate-700/70 font-bold whitespace-nowrap shrink-0 transition cursor-pointer"
+        >
+          Edit Rates →
+        </button>
+      </div>
+
+      <!-- Dismissible PWA Install App Banner (Appears when browser supports direct install) -->
+      <div id="pwa-install-banner" class="hidden bg-amber-500 text-slate-950 px-3.5 py-2 flex items-center justify-between gap-2 border-t border-amber-400">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-base shrink-0">📲</span>
+          <div class="min-w-0">
+            <p class="text-xs font-extrabold leading-tight truncate">Install App (ऐप इंस्टॉल करें)</p>
+            <p class="text-[10px] font-semibold text-slate-900/80 truncate">होम स्क्रीन पर जोड़ें • बिना इंटरनेट चलाएं</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button
+            id="pwa-install-btn"
+            type="button"
+            class="min-h-[34px] px-3 py-1 rounded-lg bg-slate-900 text-amber-400 text-xs font-extrabold shadow-xs active:scale-95 transition cursor-pointer"
+          >
+            Install
+          </button>
+          <button
+            id="pwa-dismiss-btn"
+            type="button"
+            aria-label="Dismiss Install Banner"
+            class="w-8 h-8 rounded-lg hover:bg-amber-600/40 text-slate-950 font-extrabold text-sm flex items-center justify-center cursor-pointer"
+          >
+            ✕
+          </button>
         </div>
       </div>
+    </header>
 
-      <div class="section-label">डिफ़ॉल्ट टेस्टिंग (Default Testing Liters)</div>
-      <div class="grid-2">
-        <div class="field">
-          <label>Totalizer A (MS)</label>
-          <select id="cfg-test-a">
-            <option value="0">0 L</option>
-            <option value="5">5 L</option>
-          </select>
+    <!-- MAIN CONTENT BODY -->
+    <main class="p-4 space-y-4 flex-1">
+
+      <!-- 2. TOTALIZER A & TOTALIZER B -->
+      <section aria-label="Totalizer Readings" class="space-y-3.5">
+
+        <!-- TOTALIZER - A CARD -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs">
+          <div class="flex items-center justify-between mb-2.5">
+            <h2 class="text-sm font-extrabold uppercase tracking-wide text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-xs flex items-center justify-center font-extrabold">A</span>
+              Totalizer - A
+            </h2>
+            <span id="badge-nozzle-a" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 tabular-nums">
+              MS • ₹105.98/L
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label for="tot-a-open" class="block text-xs font-bold text-slate-700 mb-1">
+                पहले का रीडिंग <span class="text-[10px] text-slate-400 font-normal">(Opening)</span>
+              </label>
+              <input
+                id="tot-a-open"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                placeholder="0.00"
+                class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+              />
+            </div>
+
+            <div>
+              <label for="tot-a-close" class="block text-xs font-bold text-slate-700 mb-1">
+                बाद का रीडिंग <span class="text-[10px] text-slate-400 font-normal">(Closing)</span>
+              </label>
+              <input
+                id="tot-a-close"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                placeholder="0.00"
+                class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+              />
+            </div>
+          </div>
+
+          <!-- Testing Volume A (Only 0 and 5L quick-select + compact manual input) -->
+          <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1">
+            <label for="tot-a-test" class="text-xs font-bold text-slate-700 whitespace-nowrap shrink-0">
+              टेस्टिंग (लीटर)
+            </label>
+            <div class="flex items-center gap-1 shrink-0">
+              <button
+                id="quick-test-a-0"
+                type="button"
+                data-quick-test="A"
+                data-val="0"
+                class="min-w-[34px] min-h-[36px] px-2 py-1 text-xs font-extrabold rounded-xl bg-slate-900 text-amber-400 border border-slate-900 shrink-0 transition cursor-pointer"
+              >0</button>
+              <button
+                id="quick-test-a-5"
+                type="button"
+                data-quick-test="A"
+                data-val="5"
+                class="min-w-[38px] min-h-[36px] px-2 py-1 text-xs font-extrabold rounded-xl bg-slate-100 hover:bg-amber-100 text-slate-700 border border-slate-300 shrink-0 transition cursor-pointer"
+              >5L</button>
+              <div class="relative w-[68px] shrink-0">
+                <input
+                  id="tot-a-test"
+                  type="number"
+                  inputmode="decimal"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  class="w-full min-h-[36px] pl-1.5 pr-4 py-1 text-xs font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+                />
+                <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 pointer-events-none">L</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calculation Pills A -->
+          <div class="mt-2.5 pt-2.5 border-t border-dashed border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
+            <div class="bg-slate-50 rounded-lg px-2 py-1.5 border border-slate-200/70">
+              <span class="text-slate-400 block">Gross Diff</span>
+              <strong id="gross-a-liters" class="text-slate-800 font-bold tabular-nums">0.00 L</strong>
+            </div>
+            <div class="bg-amber-50/60 rounded-lg px-2 py-1.5 border border-amber-200/60">
+              <span class="text-amber-700/80 block">(-) Testing</span>
+              <strong id="test-a-pill" class="text-amber-800 font-bold tabular-nums">0.00 L</strong>
+            </div>
+            <div class="bg-slate-100 rounded-lg px-2 py-1.5 border border-slate-200">
+              <span class="text-slate-500 block">Net Sale</span>
+              <strong id="diff-a-liters" class="text-slate-900 font-extrabold tabular-nums">0.00 L</strong>
+            </div>
+            <div class="bg-emerald-50 rounded-lg px-2 py-1.5 border border-emerald-200">
+              <span class="text-emerald-700/80 block">Amount A</span>
+              <strong id="diff-a-amount" class="text-emerald-700 font-extrabold tabular-nums">₹0.00</strong>
+            </div>
+          </div>
+
+          <p id="warn-a" class="hidden mt-1.5 text-xs font-bold text-rose-600">
+            ⚠️ बाद का रीडिंग, पहले के रीडिंग से कम है!
+          </p>
         </div>
-        <div class="field">
-          <label>Totalizer B (HSD)</label>
-          <select id="cfg-test-b">
-            <option value="0">0 L</option>
-            <option value="5">5 L</option>
-          </select>
+
+        <!-- TOTALIZER - B CARD -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs">
+          <div class="flex items-center justify-between mb-2.5">
+            <h2 class="text-sm font-extrabold uppercase tracking-wide text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-xs flex items-center justify-center font-extrabold">B</span>
+              Totalizer - B
+            </h2>
+            <span id="badge-nozzle-b" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 tabular-nums">
+              HSD • ₹101.11/L
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label for="tot-b-open" class="block text-xs font-bold text-slate-700 mb-1">
+                पहले का रीडिंग <span class="text-[10px] text-slate-400 font-normal">(Opening)</span>
+              </label>
+              <input
+                id="tot-b-open"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                placeholder="0.00"
+                class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+              />
+            </div>
+
+            <div>
+              <label for="tot-b-close" class="block text-xs font-bold text-slate-700 mb-1">
+                बाद का रीडिंग <span class="text-[10px] text-slate-400 font-normal">(Closing)</span>
+              </label>
+              <input
+                id="tot-b-close"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                placeholder="0.00"
+                class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+              />
+            </div>
+          </div>
+
+          <!-- Testing Volume B (Only 0 and 5L quick-select + compact manual input) -->
+          <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1">
+            <label for="tot-b-test" class="text-xs font-bold text-slate-700 whitespace-nowrap shrink-0">
+              टेस्टिंग (लीटर)
+            </label>
+            <div class="flex items-center gap-1 shrink-0">
+              <button
+                id="quick-test-b-0"
+                type="button"
+                data-quick-test="B"
+                data-val="0"
+                class="min-w-[34px] min-h-[36px] px-2 py-1 text-xs font-extrabold rounded-xl bg-slate-900 text-amber-400 border border-slate-900 shrink-0 transition cursor-pointer"
+              >0</button>
+              <button
+                id="quick-test-b-5"
+                type="button"
+                data-quick-test="B"
+                data-val="5"
+                class="min-w-[38px] min-h-[36px] px-2 py-1 text-xs font-extrabold rounded-xl bg-slate-100 hover:bg-amber-100 text-slate-700 border border-slate-300 shrink-0 transition cursor-pointer"
+              >5L</button>
+              <div class="relative w-[68px] shrink-0">
+                <input
+                  id="tot-b-test"
+                  type="number"
+                  inputmode="decimal"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  class="w-full min-h-[36px] pl-1.5 pr-4 py-1 text-xs font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+                />
+                <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 pointer-events-none">L</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calculation Pills B -->
+          <div class="mt-2.5 pt-2.5 border-t border-dashed border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
+            <div class="bg-slate-50 rounded-lg px-2 py-1.5 border border-slate-200/70">
+              <span class="text-slate-400 block">Gross Diff</span>
+              <strong id="gross-b-liters" class="text-slate-800 font-bold tabular-nums">0.00 L</strong>
+            </div>
+            <div class="bg-amber-50/60 rounded-lg px-2 py-1.5 border border-amber-200/60">
+              <span class="text-amber-700/80 block">(-) Testing</span>
+              <strong id="test-b-pill" class="text-amber-800 font-bold tabular-nums">0.00 L</strong>
+            </div>
+            <div class="bg-slate-100 rounded-lg px-2 py-1.5 border border-slate-200">
+              <span class="text-slate-500 block">Net Sale</span>
+              <strong id="diff-b-liters" class="text-slate-900 font-extrabold tabular-nums">0.00 L</strong>
+            </div>
+            <div class="bg-emerald-50 rounded-lg px-2 py-1.5 border border-emerald-200">
+              <span class="text-emerald-700/80 block">Amount B</span>
+              <strong id="diff-b-amount" class="text-emerald-700 font-extrabold tabular-nums">₹0.00</strong>
+            </div>
+          </div>
+
+          <p id="warn-b" class="hidden mt-1.5 text-xs font-bold text-rose-600">
+            ⚠️ बाद का रीडिंग, पहले के रीडिंग से कम है!
+          </p>
+        </div>
+
+        <!-- COMBINED TOTAL BAR: Diff A + Diff B = Total Liter & Fuel Amount -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-4 shadow-md border border-slate-700">
+          <div class="flex flex-wrap items-center justify-between gap-1 text-xs sm:text-sm font-semibold text-slate-300 pb-2.5 border-b border-slate-700">
+            <span>Diff A + Diff B = Total Liter</span>
+            <span class="text-amber-400 font-bold tabular-nums">
+              <span id="formula-diff-a">0.00</span> + <span id="formula-diff-b">0.00</span> = <span id="total-liters" class="text-white text-base font-extrabold">0.00 L</span>
+            </span>
+          </div>
+
+          <div id="testing-deduct-strip" class="hidden pt-2 pb-1 text-[11px] text-amber-300 flex items-center justify-between">
+            <span>Gross Diff: <strong id="gross-total-liters" class="tabular-nums">0.00 L</strong></span>
+            <span>(-) Testing Deducted: <strong id="total-testing-liters" class="tabular-nums">0.00 L</strong></span>
+          </div>
+
+          <div class="mt-2.5 flex items-center justify-between bg-slate-950/70 border border-slate-700 rounded-xl px-3.5 py-2.5">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block">Total Fuel Amount</span>
+              <span class="text-[11px] text-slate-400">कुल फ्यूल बिक्री राशि</span>
+            </div>
+            <span id="total-fuel-amount" class="text-xl font-extrabold text-amber-400 tabular-nums">₹0.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CASH, UPI / PAYTM, उधार & उधार जमा -->
+      <section aria-label="Collections and Udhaar" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3.5">
+
+        <!-- Cash -->
+        <div class="flex items-center justify-between gap-3">
+          <label for="input-cash" class="text-sm font-bold text-slate-800 w-28 shrink-0">
+            Cash (नकद) <span class="block text-[11px] font-normal text-slate-400">गल्ला कैश</span>
+          </label>
+          <div class="relative flex-1">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+            <input
+              id="input-cash"
+              type="number"
+              inputmode="decimal"
+              step="any"
+              placeholder="0"
+              class="w-full min-h-[44px] pl-8 pr-3.5 py-2 text-base font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+            />
+          </div>
+        </div>
+
+        <!-- UPI / PayTM -->
+        <div class="flex items-center justify-between gap-3">
+          <label for="input-upi" class="text-sm font-bold text-slate-800 w-28 shrink-0">
+            UPI / PayTM <span class="block text-[11px] font-normal text-slate-400">ऑनलाइन पेमेंट</span>
+          </label>
+          <div class="relative flex-1">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+            <input
+              id="input-upi"
+              type="number"
+              inputmode="decimal"
+              step="any"
+              placeholder="0"
+              class="w-full min-h-[44px] pl-8 pr-3.5 py-2 text-base font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+            />
+          </div>
+        </div>
+
+        <!-- उधार (Credit Given) -->
+        <div class="pt-3 border-t border-slate-200">
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-base font-extrabold text-slate-900">उधार</span>
+              <span class="text-xs text-slate-400 font-medium">(Credit Given)</span>
+              <button
+                id="add-udhaar-btn"
+                type="button"
+                aria-label="Add Udhaar Row"
+                title="Add Name and Udhaar"
+                class="min-w-[44px] min-h-[44px] rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-extrabold text-2xl flex items-center justify-center shadow-xs transition cursor-pointer"
+              >
+                +
+              </button>
+            </div>
+            <div class="text-xs font-semibold text-slate-500 text-right">
+              Total उधार
+              <strong id="total-udhaar" class="block text-sm font-extrabold text-slate-900 tabular-nums">₹0.00</strong>
+            </div>
+          </div>
+
+          <div id="udhaar-rows" class="space-y-2"></div>
+        </div>
+
+        <!-- उधार जमा (Credit Recovery) -->
+        <div class="pt-3 border-t border-slate-200">
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-base font-extrabold text-emerald-800">उधार जमा</span>
+              <span class="text-xs text-slate-400 font-medium">(Recovery)</span>
+              <button
+                id="add-udhaar-jama-btn"
+                type="button"
+                aria-label="Add Udhaar Jama Row"
+                title="Add Name and Udhaar Jama"
+                class="min-w-[44px] min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-2xl flex items-center justify-center shadow-xs transition cursor-pointer"
+              >
+                +
+              </button>
+            </div>
+            <div class="text-xs font-semibold text-slate-500 text-right">
+              Total जमा
+              <strong id="total-udhaar-jama" class="block text-sm font-extrabold text-emerald-700 tabular-nums">₹0.00</strong>
+            </div>
+          </div>
+
+          <div id="udhaar-jama-rows" class="space-y-2"></div>
+        </div>
+
+        <!-- Shared Datalist for Customer Autocomplete -->
+        <datalist id="customer-names-list">
+          <option value="पप्पू"></option>
+          <option value="पदम"></option>
+          <option value="बाबुराम"></option>
+          <option value="नेहा"></option>
+          <option value="उमेश"></option>
+          <option value="बसन्त"></option>
+          <option value="रवि"></option>
+          <option value="जगरनाथ"></option>
+          <option value="करमचन्द"></option>
+          <option value="रूपचन्द"></option>
+          <option value="पवन"></option>
+          <option value="कुलदीप"></option>
+          <option value="प्रेम"></option>
+          <option value="मास्टर"></option>
+          <option value="बुधमनी"></option>
+          <option value="महेंद्र"></option>
+          <option value="ललिता"></option>
+          <option value="चन्द्र"></option>
+          <option value="शेषनाथ"></option>
+          <option value="कंचन"></option>
+        </datalist>
+      </section>
+
+      <!-- 4. LUBE & EXTRA ITEMS SECTION -->
+      <section aria-label="Lube and Extra Items" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-base font-extrabold text-slate-900 underline decoration-amber-500 decoration-2 underline-offset-4">
+              Lube & Extra Items
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">2T Oil Pouches & Additional Products</p>
+          </div>
+          <button
+            id="lube-edit-items-btn"
+            type="button"
+            class="min-h-[40px] text-xs font-bold text-slate-800 bg-slate-100 hover:bg-amber-100 border border-slate-200 px-3 py-1.5 rounded-xl transition cursor-pointer"
+          >
+            + Extra Item / Rate
+          </button>
+        </div>
+
+        <div id="lube-items-list" class="space-y-2.5"></div>
+
+        <div class="mt-3.5 pt-2.5 border-t-2 border-slate-800 flex items-center justify-between">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Total Lube & Extra</span>
+          <span id="total-lube-amount" class="text-lg font-extrabold text-slate-900 tabular-nums">₹0.00</span>
+        </div>
+      </section>
+
+      <!-- 5. SHIFT RECONCILIATION SUMMARY CARD -->
+      <section aria-label="Shift Reconciliation Summary" class="bg-white rounded-2xl border-2 border-slate-900 p-4 shadow-md space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+          <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-900">
+            शिफ्ट हिसाब मिलान (Reconciliation)
+          </h2>
+          <span id="shift-date-badge" class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg"></span>
+        </div>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span>Fuel Sale + Lube/Extra Sale</span>
+            <span class="tabular-nums font-semibold">
+              <span id="summary-fuel-sub">₹0.00</span> + <span id="summary-lube-sub">₹0.00</span>
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-700">कुल बिक्री <span class="text-xs font-normal text-slate-400">(Total Sale)</span></span>
+            <span id="summary-total-sale" class="font-extrabold text-slate-900 text-base tabular-nums">₹0.00</span>
+          </div>
+
+          <div class="flex items-center justify-between text-emerald-700">
+            <span class="font-bold">(+) उधार जमा <span class="text-xs font-normal text-emerald-600/80">(Credit Recovery)</span></span>
+            <span id="summary-udhaar-jama" class="font-extrabold text-base tabular-nums">+₹0.00</span>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-dashed border-slate-300">
+            <span class="font-extrabold text-slate-900">कुल हिसाब योग्य राशि <span class="text-xs font-normal text-slate-500">(Total Expected)</span></span>
+            <span id="summary-total-expected" class="font-extrabold text-slate-900 text-base tabular-nums">₹0.00</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-700">कुल जमा <span class="text-xs font-normal text-slate-400">(Cash + UPI + उधार दिया)</span></span>
+            <span id="summary-total-accounted" class="font-extrabold text-slate-900 text-base tabular-nums">₹0.00</span>
+          </div>
+        </div>
+
+        <!-- Difference / Short-Excess Highlight Banner -->
+        <div id="diff-status-box" class="rounded-xl p-3.5 bg-emerald-50 border border-emerald-200 flex items-center justify-between transition-colors">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-wide block text-slate-500">अंतर / हिसाब (Status)</span>
+            <span id="diff-status-label" class="text-xs font-extrabold text-emerald-700">हिसाब बराबर ✓</span>
+          </div>
+          <div id="summary-diff-amount" class="text-xl font-extrabold text-emerald-700 tabular-nums">
+            ₹0.00
+          </div>
+        </div>
+
+        <!-- Bottom Action Bar: Copy / WhatsApp & Reset Shift -->
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <button
+            id="copy-summary-btn"
+            type="button"
+            class="min-h-[48px] py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer"
+          >
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            Copy / WhatsApp
+          </button>
+
+          <button
+            id="reset-shift-btn"
+            type="button"
+            class="min-h-[48px] py-3 px-3 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 border border-slate-300 active:scale-95 text-slate-800 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition cursor-pointer"
+          >
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            नया शिफ्ट (Reset)
+          </button>
+        </div>
+
+        <!-- Direct WhatsApp Launch Strip (Appears after Copy) -->
+        <div id="whatsapp-share-strip" class="hidden pt-0.5">
+          <a
+            id="whatsapp-direct-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="min-h-[44px] w-full py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs flex items-center justify-center gap-2 transition"
+          >
+            <span>💬 सीधे WhatsApp में भेजें (Open WhatsApp) →</span>
+          </a>
+        </div>
+
+        <!-- Inline Reset Shift Confirmation Box -->
+        <div id="reset-confirm-bar" class="hidden bg-rose-50 border border-rose-200 rounded-xl p-3 space-y-2.5">
+          <p class="text-xs font-extrabold text-rose-900">
+            नया शिफ्ट शुरू करें? सभी कैश, उधार और रीडिंग साफ़ हो जाएंगे।
+          </p>
+          <div class="flex items-center justify-end gap-2">
+            <button
+              id="confirm-reset-no"
+              type="button"
+              class="min-h-[40px] px-3.5 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-100 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirm-reset-yes"
+              type="button"
+              class="min-h-[40px] px-3.5 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-extrabold hover:bg-rose-700 cursor-pointer"
+            >
+              हाँ, नया शिफ्ट शुरू करें
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SUBMENU / SETTINGS SLIDE-OVER DRAWER                                  -->
+  <!-- ===================================================================== -->
+  <div id="submenu-backdrop" class="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-xs hidden transition-opacity">
+    <div id="submenu-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl flex flex-col overflow-hidden">
+
+      <!-- Drawer Header -->
+      <div class="bg-slate-900 text-white px-4 py-3.5 flex items-center justify-between shrink-0">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-extrabold">रेट और डिफ़ॉल्ट सेटिंग्स</h2>
+            <span id="offline-status-badge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+              ● ऑफ़लाइन तैयार
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Rates, Nozzles, Extra Items & Default Values</p>
+        </div>
+        <button
+          id="close-submenu-btn"
+          type="button"
+          aria-label="Close Submenu"
+          class="min-w-[44px] min-h-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition cursor-pointer"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Drawer Scrollable Body -->
+      <div class="p-4 space-y-5 overflow-y-auto flex-1">
+
+        <!-- SECTION 1: MS Rate & HSD Rate -->
+        <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-3">
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-black">1</span>
+            Fuel Rates (MS & HSD ₹/L)
+          </h3>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="cfg-ms-rate" class="block text-xs font-bold text-emerald-700 mb-1">MS Rate (Petrol ₹/L)</label>
+              <input
+                id="cfg-ms-rate"
+                type="number"
+                inputmode="decimal"
+                step="any"
+                class="w-full min-h-[44px] px-3 py-2 text-base font-bold bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+            </div>
+
+            <div>
+              <label for="cfg-hsd-rate" class="block text-xs font-bold text-amber-700 mb-1">HSD Rate (Diesel ₹/L)</label>
+              <input
+                id="cfg-hsd-rate"
+                type="number"
+                inputmode="decimal"
+                step="any"
+                class="w-full min-h-[44px] px-3 py-2 text-base font-bold bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: Nozzle A & B Fuel Type Selector -->
+        <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-3">
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-black">2</span>
+            Nozzle A & B Fuel Assignment
+          </h3>
+
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Totalizer A Selector -->
+            <div>
+              <span class="block text-xs font-bold text-slate-700 mb-1.5">Totalizer - A</span>
+              <div class="grid grid-cols-2 gap-1.5 bg-slate-200 p-1 rounded-xl">
+                <button
+                  type="button"
+                  id="btn-noz-a-ms"
+                  data-nozzle="A"
+                  data-fuel="MS"
+                  class="min-h-[44px] rounded-lg text-xs font-extrabold transition cursor-pointer"
+                >
+                  MS
+                </button>
+                <button
+                  type="button"
+                  id="btn-noz-a-hsd"
+                  data-nozzle="A"
+                  data-fuel="HSD"
+                  class="min-h-[44px] rounded-lg text-xs font-extrabold transition cursor-pointer"
+                >
+                  HSD
+                </button>
+              </div>
+            </div>
+
+            <!-- Totalizer B Selector -->
+            <div>
+              <span class="block text-xs font-bold text-slate-700 mb-1.5">Totalizer - B</span>
+              <div class="grid grid-cols-2 gap-1.5 bg-slate-200 p-1 rounded-xl">
+                <button
+                  type="button"
+                  id="btn-noz-b-ms"
+                  data-nozzle="B"
+                  data-fuel="MS"
+                  class="min-h-[44px] rounded-lg text-xs font-extrabold transition cursor-pointer"
+                >
+                  MS
+                </button>
+                <button
+                  type="button"
+                  id="btn-noz-b-hsd"
+                  data-nozzle="B"
+                  data-fuel="HSD"
+                  class="min-h-[44px] rounded-lg text-xs font-extrabold transition cursor-pointer"
+                >
+                  HSD
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: Lube Pouch Rates & Extra Items Manager -->
+        <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-3">
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-black">3</span>
+            Lube Pouches & Extra Items
+          </h3>
+
+          <div class="grid grid-cols-3 gap-2.5">
+            <div>
+              <label for="cfg-rate-20ml" class="block text-xs font-bold text-slate-700 mb-1">20 ml (₹)</label>
+              <input
+                id="cfg-rate-20ml"
+                type="number"
+                inputmode="decimal"
+                step="any"
+                class="w-full min-h-[44px] px-2.5 py-2 text-sm font-bold bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+            </div>
+
+            <div>
+              <label for="cfg-rate-40ml" class="block text-xs font-bold text-slate-700 mb-1">40 ml (₹)</label>
+              <input
+                id="cfg-rate-40ml"
+                type="number"
+                inputmode="decimal"
+                step="any"
+                class="w-full min-h-[44px] px-2.5 py-2 text-sm font-bold bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+            </div>
+
+            <div>
+              <label for="cfg-rate-60ml" class="block text-xs font-bold text-slate-700 mb-1">60 ml (₹)</label>
+              <input
+                id="cfg-rate-60ml"
+                type="number"
+                inputmode="decimal"
+                step="any"
+                class="w-full min-h-[44px] px-2.5 py-2 text-sm font-bold bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+            </div>
+          </div>
+
+          <!-- Extra Items List & Add Button -->
+          <div class="pt-3 border-t border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-slate-700">Extra Items (अतिरिक्त आइटम)</span>
+              <button
+                id="add-extra-item-btn"
+                type="button"
+                class="min-h-[44px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-amber-400 text-xs font-extrabold shadow-xs transition cursor-pointer"
+              >
+                + Add Extra Item
+              </button>
+            </div>
+
+            <div id="cfg-extra-items-list" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: Default Values (डिफ़ॉल्ट सेटिंग्स) -->
+        <div class="bg-amber-50/80 rounded-2xl p-3.5 border border-amber-200 space-y-3">
+          <div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-950 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-black">4</span>
+              Default Values (डिफ़ॉल्ट सेटिंग्स)
+            </h3>
+            <p class="text-[11px] text-amber-900/80 mt-1">
+              नया शिफ्ट (Reset) करने पर ये डिफ़ॉल्ट Testing लीटर और रीडिंग नियम लागू होंगे।
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="cfg-default-test-a" class="block text-xs font-bold text-slate-800 mb-1">Default Testing - A (L)</label>
+              <input
+                id="cfg-default-test-a"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                class="w-full min-h-[44px] px-3 py-2 text-sm font-bold bg-white border border-amber-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+            </div>
+
+            <div>
+              <label for="cfg-default-test-b" class="block text-xs font-bold text-slate-800 mb-1">Default Testing - B (L)</label>
+              <input
+                id="cfg-default-test-b"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                class="w-full min-h-[44px] px-3 py-2 text-sm font-bold bg-white border border-amber-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+            </div>
+          </div>
+
+          <!-- Carry-forward Closing Reading Toggle -->
+          <label for="cfg-carry-forward" class="flex items-start gap-3 bg-white p-3 rounded-xl border border-amber-200 cursor-pointer min-h-[44px]">
+            <input
+              id="cfg-carry-forward"
+              type="checkbox"
+              class="w-5 h-5 mt-0.5 accent-amber-500 rounded cursor-pointer shrink-0"
+            />
+            <div class="text-xs">
+              <span class="font-extrabold text-slate-900 block">Carry-forward Closing Reading on Reset</span>
+              <span class="text-slate-500 text-[11px]">नया शिफ्ट (Reset) करने पर पिछला Closing रीडिंग अपने आप Opening में भर जाए</span>
+            </div>
+          </label>
+
+          <!-- Save Custom Defaults & Restore Factory Defaults -->
+          <div class="grid grid-cols-1 gap-2 pt-1">
+            <button
+              id="save-custom-defaults-btn"
+              type="button"
+              class="min-h-[44px] w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-98 text-amber-400 font-extrabold text-xs shadow-xs transition cursor-pointer"
+            >
+              ★ Save Current Settings as My Default
+            </button>
+
+            <button
+              id="restore-factory-defaults-btn"
+              type="button"
+              class="min-h-[44px] w-full py-2.5 px-3 rounded-xl bg-white hover:bg-rose-50 border border-slate-300 hover:border-rose-300 active:scale-98 text-slate-700 hover:text-rose-700 font-bold text-xs transition cursor-pointer"
+            >
+              ↺ Restore Factory Defaults
+            </button>
+          </div>
         </div>
       </div>
 
-      <div style="margin-top:16px;">
-        <button type="button" class="btn btn-primary" style="width:100%;" onclick="saveSettings()">सेटिंग्स सेव करें</button>
+      <!-- Sticky Footer in Submenu -->
+      <div class="p-4 border-t border-slate-200 bg-slate-50 shrink-0">
+        <button
+          id="save-settings-btn"
+          type="button"
+          class="min-h-[50px] w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-98 text-slate-950 font-extrabold text-sm shadow-md transition cursor-pointer"
+        >
+          ✓ Save & Apply Settings
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- ===================================================================== -->
+  <!-- APPLICATION LOGIC, PWA INSTALL PROMPT & OFFLINE CACHING               -->
+  <!-- ===================================================================== -->
   <script>
-    const STORAGE_KEY = 'pump_shift_hisab_v1';
-    let state = {
-      rateMS: 100.00,
-      rateHSD: 92.00,
-      defaultTestA: 0,
-      defaultTestB: 0
-    };
+    (function () {
+      'use strict';
 
-    function loadState() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (saved) state = { ...state, ...saved };
-      } catch (e) {}
-      document.getElementById('test-a').value = state.defaultTestA;
-      document.getElementById('test-b').value = state.defaultTestB;
-      updateTestingButtons('a', state.defaultTestA);
-      updateTestingButtons('b', state.defaultTestB);
-      updateRateLabels();
-    }
+      // Storage Keys (includes automatic backward migration from earlier versions)
+      const STORAGE_KEY_SETTINGS = 'pump_hisab_settings_v6';
+      const LEGACY_SETTINGS_KEYS = ['pump_hisab_config_v3', 'pump_hisab_config_v2', 'pump_hisab_settings_v5'];
+      const STORAGE_KEY_CUSTOM_DEFAULTS = 'pump_hisab_custom_defaults_v6';
+      const STORAGE_KEY_SHIFT = 'pump_hisab_shift_v6';
+      const LEGACY_SHIFT_KEYS = ['pump_hisab_shift_v3', 'pump_hisab_shift_v2', 'pump_hisab_shift_v5'];
 
-    function updateRateLabels() {
-      const ms = Number(state.rateMS).toFixed(2);
-      const hsd = Number(state.rateHSD).toFixed(2);
-      document.getElementById('disp-rate-ms').textContent = `₹${ms}`;
-      document.getElementById('disp-rate-hsd').textContent = `₹${hsd}`;
-      document.getElementById('tag-rate-a').textContent = `MS - ₹${ms}/L`;
-      document.getElementById('tag-rate-b').textContent = `HSD - ₹${hsd}/L`;
-    }
+      const FACTORY_DEFAULT_CONFIG = {
+        msRate: 105.98,
+        hsdRate: 101.11,
+        nozzleA: 'MS',
+        nozzleB: 'HSD',
+        defaultTestA: 0,
+        defaultTestB: 0,
+        carryForwardClosing: false,
+        lubeRates: {
+          '20ml': 14,
+          '40ml': 23,
+          '60ml': 31
+        },
+        extraItems: [
+          { id: 'petrol_plus', name: 'Petrol Plus', rate: 10 }
+        ]
+      };
 
-    function setTesting(unit, val) {
-      document.getElementById(`test-${unit}`).value = val;
-      updateTestingButtons(unit, val);
-      calculate();
-    }
+      function num(val) {
+        const n = parseFloat(val);
+        return Number.isFinite(n) ? n : 0;
+      }
 
-    function onCustomTesting(unit) {
-      const val = parseFloat(document.getElementById(`test-${unit}`).value) || 0;
-      updateTestingButtons(unit, val);
-      calculate();
-    }
+      function formatINR(amount) {
+        return '₹' + amount.toLocaleString('en-IN', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
 
-    function updateTestingButtons(unit, val) {
-      document.getElementById(`btn-test-${unit}-0`).classList.toggle('active', val === 0);
-      document.getElementById(`btn-test-${unit}-5`).classList.toggle('active', val === 5);
-    }
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
 
-    function addRow(listId, name = '', amt = '') {
-      const container = document.getElementById(listId);
-      const row = document.createElement('div');
-      row.className = 'list-row';
-      row.innerHTML = `
-        <input type="text" placeholder="नाम / विवरण" value="${name}" oninput="calculate()" />
-        <input type="number" step="0.01" placeholder="₹ राशि" value="${amt}" oninput="calculate()" />
-        <button type="button" class="del-btn" onclick="this.parentElement.remove(); calculate();">✕</button>
-      `;
-      container.appendChild(row);
-    }
+      function normalizeConfig(rawObj) {
+        const parsed = (rawObj && typeof rawObj === 'object') ? rawObj : {};
+        const validExtra = Array.isArray(parsed.extraItems)
+          ? parsed.extraItems
+              .filter(item => item && typeof item === 'object' && item.id)
+              .map(item => ({
+                id: String(item.id),
+                name: item.name != null ? String(item.name) : '',
+                rate: Math.max(0, num(item.rate))
+              }))
+          : JSON.parse(JSON.stringify(FACTORY_DEFAULT_CONFIG.extraItems));
 
-    function sumList(listId) {
-      let total = 0;
-      document.querySelectorAll(`#${listId} .list-row`).forEach(row => {
-        const val = parseFloat(row.querySelectorAll('input')[1].value) || 0;
-        total += val;
-      });
-      return total;
-    }
+        return {
+          msRate: num(parsed.msRate) > 0 ? num(parsed.msRate) : FACTORY_DEFAULT_CONFIG.msRate,
+          hsdRate: num(parsed.hsdRate) > 0 ? num(parsed.hsdRate) : FACTORY_DEFAULT_CONFIG.hsdRate,
+          nozzleA: parsed.nozzleA === 'HSD' ? 'HSD' : 'MS',
+          nozzleB: parsed.nozzleB === 'MS' ? 'MS' : 'HSD',
+          defaultTestA: Math.max(0, num(parsed.defaultTestA)),
+          defaultTestB: Math.max(0, num(parsed.defaultTestB)),
+          carryForwardClosing: Boolean(parsed.carryForwardClosing),
+          lubeRates: {
+            '20ml': parsed.lubeRates && parsed.lubeRates['20ml'] != null ? Math.max(0, num(parsed.lubeRates['20ml'])) : FACTORY_DEFAULT_CONFIG.lubeRates['20ml'],
+            '40ml': parsed.lubeRates && parsed.lubeRates['40ml'] != null ? Math.max(0, num(parsed.lubeRates['40ml'])) : FACTORY_DEFAULT_CONFIG.lubeRates['40ml'],
+            '60ml': parsed.lubeRates && parsed.lubeRates['60ml'] != null ? Math.max(0, num(parsed.lubeRates['60ml'])) : FACTORY_DEFAULT_CONFIG.lubeRates['60ml']
+          },
+          extraItems: validExtra
+        };
+      }
 
-    function calculate() {
-      const openA = parseFloat(document.getElementById('open-a').value) || 0;
-      const closeA = parseFloat(document.getElementById('close-a').value) || 0;
-      const testA = parseFloat(document.getElementById('test-a').value) || 0;
-      const grossA = Math.max(0, closeA - openA);
-      const netA = Math.max(0, grossA - testA);
-      const amtA = netA * state.rateMS;
+      function getSavedCustomOrFactoryDefault() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY_CUSTOM_DEFAULTS);
+          if (raw) {
+            return normalizeConfig(JSON.parse(raw));
+          }
+        } catch (err) {
+          console.warn('Error loading custom defaults:', err);
+        }
+        return normalizeConfig(FACTORY_DEFAULT_CONFIG);
+      }
 
-      const openB = parseFloat(document.getElementById('open-b').value) || 0;
-      const closeB = parseFloat(document.getElementById('close-b').value) || 0;
-      const testB = parseFloat(document.getElementById('test-b').value) || 0;
-      const grossB = Math.max(0, closeB - openB);
-      const netB = Math.max(0, grossB - testB);
-      const amtB = netB * state.rateHSD;
+      function loadSettings() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+          if (raw) {
+            return normalizeConfig(JSON.parse(raw));
+          }
+          // Check legacy keys so existing saved rates on GitHub Pages are preserved
+          for (let i = 0; i < LEGACY_SETTINGS_KEYS.length; i++) {
+            const legacyRaw = localStorage.getItem(LEGACY_SETTINGS_KEYS[i]);
+            if (legacyRaw) {
+              const migrated = normalizeConfig(JSON.parse(legacyRaw));
+              localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(migrated));
+              return migrated;
+            }
+          }
+        } catch (err) {
+          console.warn('Error loading settings:', err);
+        }
+        return getSavedCustomOrFactoryDefault();
+      }
 
-      document.getElementById('gross-a').textContent = `${grossA.toFixed(2)} L`;
-      document.getElementById('show-test-a').textContent = `${testA.toFixed(2)} L`;
-      document.getElementById('net-a').textContent = `${netA.toFixed(2)} L`;
-      document.getElementById('amt-a').textContent = `₹${amtA.toFixed(2)}`;
+      function saveSettingsToStorage() {
+        try {
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+        } catch (err) {
+          console.warn('Unable to save settings:', err);
+        }
+      }
 
-      document.getElementById('gross-b').textContent = `${grossB.toFixed(2)} L`;
-      document.getElementById('show-test-b').textContent = `${testB.toFixed(2)} L`;
-      document.getElementById('net-b').textContent = `${netB.toFixed(2)} L`;
-      document.getElementById('amt-b').textContent = `₹${amtB.toFixed(2)}`;
+      function createFreshShift(cfg, prevShift) {
+        const activeCfg = cfg || settings;
+        const carry = Boolean(activeCfg.carryForwardClosing) && prevShift;
+        const nextOpenA = carry && prevShift.totAClose ? String(prevShift.totAClose) : '';
+        const nextOpenB = carry && prevShift.totBClose ? String(prevShift.totBClose) : '';
+        const defTestA = num(activeCfg.defaultTestA);
+        const defTestB = num(activeCfg.defaultTestB);
 
-      const totalFuel = amtA + amtB;
-      document.getElementById('total-liters').textContent = `${netA.toFixed(2)} + ${netB.toFixed(2)} = ${(netA + netB).toFixed(2)} L`;
-      document.getElementById('total-fuel-amt').textContent = `₹${totalFuel.toFixed(2)}`;
+        return {
+          totAOpen: nextOpenA,
+          totAClose: '',
+          totATest: defTestA > 0 ? String(defTestA) : '',
+          totBOpen: nextOpenB,
+          totBClose: '',
+          totBTest: defTestB > 0 ? String(defTestB) : '',
+          cash: '',
+          upi: '',
+          udhaar: [{ id: Date.now(), name: '', amount: '' }],
+          udhaarJama: [{ id: Date.now() + 1, name: '', amount: '' }],
+          lubeQty: { '20ml': '', '40ml': '', '60ml': '' },
+          extraQty: {}
+        };
+      }
 
-      const extraTotal = sumList('extra-list');
-      const recoveryTotal = sumList('recovery-list');
-      const creditTotal = sumList('credit-list');
-      const expenseTotal = sumList('expense-list');
-      const cash = parseFloat(document.getElementById('cash-amt').value) || 0;
-      const upi = parseFloat(document.getElementById('upi-amt').value) || 0;
+      function loadShiftData() {
+        const fallback = createFreshShift(settings, null);
+        try {
+          let raw = localStorage.getItem(STORAGE_KEY_SHIFT);
+          if (!raw) {
+            for (let i = 0; i < LEGACY_SHIFT_KEYS.length; i++) {
+              const legacyRaw = localStorage.getItem(LEGACY_SHIFT_KEYS[i]);
+              if (legacyRaw) {
+                raw = legacyRaw;
+                break;
+              }
+            }
+          }
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object') {
+              const udhaar = Array.isArray(parsed.udhaar) && parsed.udhaar.length > 0
+                ? parsed.udhaar.map((r, i) => ({
+                    id: Number(r && r.id) || (Date.now() + i),
+                    name: r && r.name != null ? String(r.name) : '',
+                    amount: r && r.amount != null ? String(r.amount) : ''
+                  }))
+                : fallback.udhaar;
 
-      const totalSales = totalFuel + extraTotal;
-      const expected = totalSales + recoveryTotal;
-      const accounted = cash + upi + creditTotal + expenseTotal;
-      const diff = accounted - expected;
+              const udhaarJama = Array.isArray(parsed.udhaarJama) && parsed.udhaarJama.length > 0
+                ? parsed.udhaarJama.map((r, i) => ({
+                    id: Number(r && r.id) || (Date.now() + 100 + i),
+                    name: r && r.name != null ? String(r.name) : '',
+                    amount: r && r.amount != null ? String(r.amount) : ''
+                  }))
+                : fallback.udhaarJama;
 
-      document.getElementById('sum-sales').textContent = `₹${totalSales.toFixed(2)}`;
-      document.getElementById('sum-recovery').textContent = `₹${recoveryTotal.toFixed(2)}`;
-      document.getElementById('sum-expected').textContent = `₹${expected.toFixed(2)}`;
-      document.getElementById('sum-accounted').textContent = `₹${accounted.toFixed(2)}`;
+              const extraQty = (parsed.extraQty && typeof parsed.extraQty === 'object' && !Array.isArray(parsed.extraQty))
+                ? parsed.extraQty
+                : {};
 
-      const banner = document.getElementById('diff-banner');
-      if (Math.abs(diff) < 0.5) {
-        banner.className = 'diff-banner diff-ok';
-        banner.textContent = `हिसाब बराबर (₹0.00)`;
-      } else if (diff < 0) {
-        banner.className = 'diff-banner diff-short';
-        banner.textContent = `कम है (Short): ₹${Math.abs(diff).toFixed(2)}`;
+              return {
+                totAOpen: parsed.totAOpen != null ? String(parsed.totAOpen) : '',
+                totAClose: parsed.totAClose != null ? String(parsed.totAClose) : '',
+                totATest: parsed.totATest != null ? String(parsed.totATest) : fallback.totATest,
+                totBOpen: parsed.totBOpen != null ? String(parsed.totBOpen) : '',
+                totBClose: parsed.totBClose != null ? String(parsed.totBClose) : '',
+                totBTest: parsed.totBTest != null ? String(parsed.totBTest) : fallback.totBTest,
+                cash: parsed.cash != null ? String(parsed.cash) : '',
+                upi: parsed.upi != null ? String(parsed.upi) : '',
+                udhaar: udhaar,
+                udhaarJama: udhaarJama,
+                lubeQty: {
+                  '20ml': parsed.lubeQty && parsed.lubeQty['20ml'] != null ? String(parsed.lubeQty['20ml']) : '',
+                  '40ml': parsed.lubeQty && parsed.lubeQty['40ml'] != null ? String(parsed.lubeQty['40ml']) : '',
+                  '60ml': parsed.lubeQty && parsed.lubeQty['60ml'] != null ? String(parsed.lubeQty['60ml']) : ''
+                },
+                extraQty: extraQty
+              };
+            }
+          }
+        } catch (err) {
+          console.warn('Error loading shift data:', err);
+        }
+        return fallback;
+      }
+
+      function saveShiftToStorage() {
+        try {
+          localStorage.setItem(STORAGE_KEY_SHIFT, JSON.stringify(shiftData));
+        } catch (err) {
+          console.warn('Unable to save shift data:', err);
+        }
+      }
+
+      // =====================================================================
+      // PWA INSTALL PROMPT & STATIC SERVICE WORKER REGISTRATION
+      // =====================================================================
+      let deferredInstallPrompt = null;
+
+      function setupOfflineAndInstallSupport() {
+        const installBanner = document.getElementById('pwa-install-banner');
+        const installBtn = document.getElementById('pwa-install-btn');
+        const dismissBtn = document.getElementById('pwa-dismiss-btn');
+        const offlineBadge = document.getElementById('offline-status-badge');
+
+        // Listen for Chrome/Android PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredInstallPrompt = e;
+          if (installBanner) {
+            installBanner.classList.remove('hidden');
+          }
+        });
+
+        window.addEventListener('appinstalled', () => {
+          deferredInstallPrompt = null;
+          if (installBanner) installBanner.classList.add('hidden');
+          showToast('✓ ऐप इंस्टॉल हो गया!');
+        });
+
+        if (installBtn) {
+          installBtn.addEventListener('click', async () => {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            try {
+              const choiceResult = await deferredInstallPrompt.userChoice;
+              if (choiceResult && choiceResult.outcome === 'accepted') {
+                showToast('✓ ऐप इंस्टॉल हो रहा है...');
+              }
+            } catch (err) {}
+            deferredInstallPrompt = null;
+            if (installBanner) installBanner.classList.add('hidden');
+          });
+        }
+
+        if (dismissBtn) {
+          dismissBtn.addEventListener('click', () => {
+            if (installBanner) installBanner.classList.add('hidden');
+          });
+        }
+
+        // Register real static sw.js file hosted in GitHub Pages root
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').catch(() => {});
+          });
+        }
+
+        // Live Online / Offline Status Indicator inside Submenu
+        function updateConnectionBadge() {
+          if (!offlineBadge) return;
+          if (navigator.onLine) {
+            offlineBadge.textContent = '● ऑफ़लाइन तैयार';
+            offlineBadge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40';
+          } else {
+            offlineBadge.textContent = '● Offline Mode';
+            offlineBadge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40';
+          }
+        }
+        updateConnectionBadge();
+        window.addEventListener('online', updateConnectionBadge);
+        window.addEventListener('offline', updateConnectionBadge);
+      }
+
+      // Application State
+      let settings = loadSettings();
+      let shiftData = loadShiftData();
+      let tempSettings = null;
+      let toastTimer = null;
+
+      function showToast(message) {
+        const toast = document.getElementById('toast');
+        const msgEl = document.getElementById('toast-msg');
+        if (!toast || !msgEl) return;
+        msgEl.textContent = message;
+        toast.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 2500);
+      }
+
+      // =====================================================================
+      // QUICK TESTING BUTTON HIGHLIGHT SYNC (ONLY 0 & 5L)
+      // =====================================================================
+      function updateQuickTestButtonsUI() {
+        const activeBtnClass = 'min-w-[34px] min-h-[36px] px-2 py-1 text-xs font-extrabold rounded-xl bg-slate-900 text-amber-400 border border-slate-900 shrink-0 shadow-xs transition cursor-pointer';
+        const inactiveBtnClass = 'min-w-[34px] min-h-[36px] px-2 py-1 text-xs font-extrabold rounded-xl bg-slate-100 hover:bg-amber-100 text-slate-700 border border-slate-300 shrink-0 transition cursor-pointer';
+
+        const valA = Math.max(0, num(shiftData.totATest));
+        document.getElementById('quick-test-a-0').className = valA === 0 ? activeBtnClass : inactiveBtnClass;
+        document.getElementById('quick-test-a-5').className = Math.abs(valA - 5) < 0.001 ? activeBtnClass : inactiveBtnClass;
+
+        const valB = Math.max(0, num(shiftData.totBTest));
+        document.getElementById('quick-test-b-0').className = valB === 0 ? activeBtnClass : inactiveBtnClass;
+        document.getElementById('quick-test-b-5').className = Math.abs(valB - 5) < 0.001 ? activeBtnClass : inactiveBtnClass;
+      }
+
+      // =====================================================================
+      // MAIN SCREEN RENDERING
+      // =====================================================================
+      function renderHeaderAndBadges() {
+        const msRate = num(settings.msRate);
+        const hsdRate = num(settings.hsdRate);
+
+        document.getElementById('strip-ms-rate').textContent = `₹${msRate.toFixed(2)}`;
+        document.getElementById('strip-hsd-rate').textContent = `₹${hsdRate.toFixed(2)}`;
+
+        const badgeA = document.getElementById('badge-nozzle-a');
+        const fuelA = settings.nozzleA;
+        const rateA = fuelA === 'MS' ? msRate : hsdRate;
+        badgeA.textContent = `${fuelA} • ₹${rateA.toFixed(2)}/L`;
+        badgeA.className = fuelA === 'MS'
+          ? 'text-xs font-extrabold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 tabular-nums'
+          : 'text-xs font-extrabold px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 tabular-nums';
+
+        const badgeB = document.getElementById('badge-nozzle-b');
+        const fuelB = settings.nozzleB;
+        const rateB = fuelB === 'MS' ? msRate : hsdRate;
+        badgeB.textContent = `${fuelB} • ₹${rateB.toFixed(2)}/L`;
+        badgeB.className = fuelB === 'MS'
+          ? 'text-xs font-extrabold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 tabular-nums'
+          : 'text-xs font-extrabold px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 tabular-nums';
+      }
+
+      function renderUdhaarRows() {
+        const container = document.getElementById('udhaar-rows');
+        container.innerHTML = '';
+
+        shiftData.udhaar.forEach((row) => {
+          const rowDiv = document.createElement('div');
+          rowDiv.className = 'flex items-center gap-2';
+          rowDiv.innerHTML = `
+            <input
+              type="text"
+              list="customer-names-list"
+              data-udhaar-name="${row.id}"
+              value="${escapeHtml(row.name)}"
+              placeholder="Name (नाम)"
+              class="flex-1 min-w-0 min-h-[44px] px-3 py-2 text-sm font-semibold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white"
+            />
+            <span class="text-slate-400 font-bold">-</span>
+            <div class="relative w-28 sm:w-32 shrink-0">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">₹</span>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="any"
+                data-udhaar-amount="${row.id}"
+                value="${escapeHtml(row.amount)}"
+                placeholder="0"
+                class="w-full min-h-[44px] pl-6 pr-2.5 py-2 text-sm font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+              />
+            </div>
+            ${shiftData.udhaar.length > 1 ? `
+              <button
+                type="button"
+                data-udhaar-del="${row.id}"
+                aria-label="Remove Udhaar Row"
+                class="min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 font-bold text-lg flex items-center justify-center shrink-0 transition cursor-pointer"
+              >✕</button>
+            ` : ''}
+          `;
+          container.appendChild(rowDiv);
+        });
+      }
+
+      function renderUdhaarJamaRows() {
+        const container = document.getElementById('udhaar-jama-rows');
+        container.innerHTML = '';
+
+        shiftData.udhaarJama.forEach((row) => {
+          const rowDiv = document.createElement('div');
+          rowDiv.className = 'flex items-center gap-2';
+          rowDiv.innerHTML = `
+            <input
+              type="text"
+              list="customer-names-list"
+              data-jama-name="${row.id}"
+              value="${escapeHtml(row.name)}"
+              placeholder="Name (नाम)"
+              class="flex-1 min-w-0 min-h-[44px] px-3 py-2 text-sm font-semibold text-slate-900 bg-emerald-50/40 border border-emerald-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white"
+            />
+            <span class="text-slate-400 font-bold">-</span>
+            <div class="relative w-28 sm:w-32 shrink-0">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-emerald-600 text-sm font-bold">₹</span>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="any"
+                data-jama-amount="${row.id}"
+                value="${escapeHtml(row.amount)}"
+                placeholder="0"
+                class="w-full min-h-[44px] pl-6 pr-2.5 py-2 text-sm font-bold text-right text-emerald-900 bg-emerald-50/40 border border-emerald-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white tabular-nums"
+              />
+            </div>
+            ${shiftData.udhaarJama.length > 1 ? `
+              <button
+                type="button"
+                data-jama-del="${row.id}"
+                aria-label="Remove Udhaar Jama Row"
+                class="min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 font-bold text-lg flex items-center justify-center shrink-0 transition cursor-pointer"
+              >✕</button>
+            ` : ''}
+          `;
+          container.appendChild(rowDiv);
+        });
+      }
+
+      function renderLubeItems() {
+        const container = document.getElementById('lube-items-list');
+        container.innerHTML = '';
+
+        const standardPouches = [
+          { key: '20ml', label: '20 ml', rate: num(settings.lubeRates['20ml']) },
+          { key: '40ml', label: '40 ml', rate: num(settings.lubeRates['40ml']) },
+          { key: '60ml', label: '60 ml', rate: num(settings.lubeRates['60ml']) }
+        ];
+
+        standardPouches.forEach((item) => {
+          const qtyVal = shiftData.lubeQty[item.key] || '';
+          const rowTotal = num(qtyVal) * item.rate;
+
+          const div = document.createElement('div');
+          div.className = 'flex items-center justify-between gap-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200';
+          div.innerHTML = `
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-sm font-extrabold text-slate-800 w-14">${item.label}</span>
+              <span class="text-slate-400 font-bold">×</span>
+              <input
+                type="number"
+                inputmode="numeric"
+                step="1"
+                min="0"
+                data-lube-key="${item.key}"
+                value="${escapeHtml(qtyVal)}"
+                placeholder="Qty"
+                class="w-20 min-h-[42px] px-2.5 py-1.5 text-sm font-bold text-center text-slate-900 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums"
+              />
+              <span class="text-[11px] font-semibold text-slate-500 tabular-nums">@ ₹${item.rate}</span>
+            </div>
+            <div class="text-sm font-extrabold text-slate-900 tabular-nums" id="lube-sub-${item.key}">
+              ₹${rowTotal.toFixed(2)}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+
+        settings.extraItems.forEach((extra) => {
+          const qtyVal = shiftData.extraQty[extra.id] || '';
+          const rate = num(extra.rate);
+          const rowTotal = num(qtyVal) * rate;
+
+          const div = document.createElement('div');
+          div.className = 'flex items-center justify-between gap-2 bg-amber-50/60 px-3 py-2 rounded-xl border border-amber-200';
+          div.innerHTML = `
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+              <span class="text-xs sm:text-sm font-extrabold text-slate-800 truncate max-w-[96px]" title="${escapeHtml(extra.name)}">${escapeHtml(extra.name)}</span>
+              <span class="text-slate-400 font-bold">×</span>
+              <input
+                type="number"
+                inputmode="numeric"
+                step="1"
+                min="0"
+                data-extra-key="${escapeHtml(extra.id)}"
+                value="${escapeHtml(qtyVal)}"
+                placeholder="Qty"
+                class="w-16 sm:w-20 min-h-[42px] px-2 py-1.5 text-sm font-bold text-center text-slate-900 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 tabular-nums shrink-0"
+              />
+              <span class="text-[11px] font-semibold text-slate-600 tabular-nums shrink-0">@ ₹${rate}</span>
+            </div>
+            <div class="text-sm font-extrabold text-slate-900 tabular-nums shrink-0" id="extra-sub-${escapeHtml(extra.id)}">
+              ₹${rowTotal.toFixed(2)}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      // =====================================================================
+      // LIVE CALCULATION ENGINE
+      // =====================================================================
+      function recalculateAll() {
+        updateQuickTestButtonsUI();
+
+        const msRate = num(settings.msRate);
+        const hsdRate = num(settings.hsdRate);
+
+        // Totalizer A
+        const openA = num(shiftData.totAOpen);
+        const closeA = num(shiftData.totAClose);
+        const testA = Math.max(0, num(shiftData.totATest));
+        const hasCloseA = shiftData.totAClose !== '' && shiftData.totAClose !== null;
+        const rawGrossA = hasCloseA ? (closeA - openA) : 0;
+        const warnA = document.getElementById('warn-a');
+        if (hasCloseA && rawGrossA < 0) {
+          warnA.classList.remove('hidden');
+        } else {
+          warnA.classList.add('hidden');
+        }
+        const safeGrossA = Math.max(0, rawGrossA);
+        const netSaleA = Math.max(0, safeGrossA - testA);
+        const rateA = settings.nozzleA === 'MS' ? msRate : hsdRate;
+        const amountA = netSaleA * rateA;
+
+        document.getElementById('gross-a-liters').textContent = `${safeGrossA.toFixed(2)} L`;
+        document.getElementById('test-a-pill').textContent = `${testA.toFixed(2)} L`;
+        document.getElementById('diff-a-liters').textContent = `${netSaleA.toFixed(2)} L`;
+        document.getElementById('diff-a-amount').textContent = formatINR(amountA);
+
+        // Totalizer B
+        const openB = num(shiftData.totBOpen);
+        const closeB = num(shiftData.totBClose);
+        const testB = Math.max(0, num(shiftData.totBTest));
+        const hasCloseB = shiftData.totBClose !== '' && shiftData.totBClose !== null;
+        const rawGrossB = hasCloseB ? (closeB - openB) : 0;
+        const warnB = document.getElementById('warn-b');
+        if (hasCloseB && rawGrossB < 0) {
+          warnB.classList.remove('hidden');
+        } else {
+          warnB.classList.add('hidden');
+        }
+        const safeGrossB = Math.max(0, rawGrossB);
+        const netSaleB = Math.max(0, safeGrossB - testB);
+        const rateB = settings.nozzleB === 'MS' ? msRate : hsdRate;
+        const amountB = netSaleB * rateB;
+
+        document.getElementById('gross-b-liters').textContent = `${safeGrossB.toFixed(2)} L`;
+        document.getElementById('test-b-pill').textContent = `${testB.toFixed(2)} L`;
+        document.getElementById('diff-b-liters').textContent = `${netSaleB.toFixed(2)} L`;
+        document.getElementById('diff-b-amount').textContent = formatINR(amountB);
+
+        // Combined Fuel Summary
+        const totalGrossLiters = safeGrossA + safeGrossB;
+        const totalTestingLiters = testA + testB;
+        const totalNetLiters = netSaleA + netSaleB;
+        const totalFuelAmount = amountA + amountB;
+
+        document.getElementById('formula-diff-a').textContent = netSaleA.toFixed(2);
+        document.getElementById('formula-diff-b').textContent = netSaleB.toFixed(2);
+        document.getElementById('total-liters').textContent = `${totalNetLiters.toFixed(2)} L`;
+        document.getElementById('total-fuel-amount').textContent = formatINR(totalFuelAmount);
+
+        const testStrip = document.getElementById('testing-deduct-strip');
+        if (totalTestingLiters > 0) {
+          testStrip.classList.remove('hidden');
+          document.getElementById('gross-total-liters').textContent = `${totalGrossLiters.toFixed(2)} L`;
+          document.getElementById('total-testing-liters').textContent = `${totalTestingLiters.toFixed(2)} L`;
+        } else {
+          testStrip.classList.add('hidden');
+        }
+
+        // Cash, UPI, Udhaar & Udhaar Jama
+        const cashAmount = num(shiftData.cash);
+        const upiAmount = num(shiftData.upi);
+        const totalUdhaar = shiftData.udhaar.reduce((sum, row) => sum + num(row.amount), 0);
+        const totalUdhaarJama = shiftData.udhaarJama.reduce((sum, row) => sum + num(row.amount), 0);
+
+        document.getElementById('total-udhaar').textContent = formatINR(totalUdhaar);
+        document.getElementById('total-udhaar-jama').textContent = formatINR(totalUdhaarJama);
+
+        // Lube & Extra Items
+        let totalLubeAmount = 0;
+        ['20ml', '40ml', '60ml'].forEach((key) => {
+          const qty = num(shiftData.lubeQty[key]);
+          const rate = num(settings.lubeRates[key]);
+          const sub = qty * rate;
+          totalLubeAmount += sub;
+          const subEl = document.getElementById(`lube-sub-${key}`);
+          if (subEl) subEl.textContent = `₹${sub.toFixed(2)}`;
+        });
+
+        settings.extraItems.forEach((extra) => {
+          const qty = num(shiftData.extraQty[extra.id]);
+          const rate = num(extra.rate);
+          const sub = qty * rate;
+          totalLubeAmount += sub;
+          const subEl = document.getElementById(`extra-sub-${extra.id}`);
+          if (subEl) subEl.textContent = `₹${sub.toFixed(2)}`;
+        });
+
+        document.getElementById('total-lube-amount').textContent = formatINR(totalLubeAmount);
+
+        // Final Reconciliation
+        const totalSale = totalFuelAmount + totalLubeAmount;
+        const totalExpected = totalSale + totalUdhaarJama;
+        const totalAccounted = cashAmount + upiAmount + totalUdhaar;
+        const difference = totalAccounted - totalExpected;
+
+        document.getElementById('summary-fuel-sub').textContent = formatINR(totalFuelAmount);
+        document.getElementById('summary-lube-sub').textContent = formatINR(totalLubeAmount);
+        document.getElementById('summary-total-sale').textContent = formatINR(totalSale);
+        document.getElementById('summary-udhaar-jama').textContent = `+${formatINR(totalUdhaarJama)}`;
+        document.getElementById('summary-total-expected').textContent = formatINR(totalExpected);
+        document.getElementById('summary-total-accounted').textContent = formatINR(totalAccounted);
+
+        const diffBox = document.getElementById('diff-status-box');
+        const diffLabel = document.getElementById('diff-status-label');
+        const diffAmountEl = document.getElementById('summary-diff-amount');
+
+        if (Math.abs(difference) < 0.01) {
+          diffBox.className = 'rounded-xl p-3.5 bg-emerald-50 border border-emerald-200 flex items-center justify-between transition-colors';
+          diffLabel.className = 'text-xs font-extrabold text-emerald-700';
+          diffLabel.textContent = 'हिसाब बराबर ✓';
+          diffAmountEl.className = 'text-xl font-extrabold text-emerald-700 tabular-nums';
+          diffAmountEl.textContent = '₹0.00';
+        } else if (difference > 0) {
+          diffBox.className = 'rounded-xl p-3.5 bg-amber-50 border border-amber-300 flex items-center justify-between transition-colors';
+          diffLabel.className = 'text-xs font-extrabold text-amber-800';
+          diffLabel.textContent = '▲ Excess (ज्यादा)';
+          diffAmountEl.className = 'text-xl font-extrabold text-amber-700 tabular-nums';
+          diffAmountEl.textContent = `+${formatINR(difference)}`;
+        } else {
+          diffBox.className = 'rounded-xl p-3.5 bg-rose-50 border border-rose-300 flex items-center justify-between transition-colors';
+          diffLabel.className = 'text-xs font-extrabold text-rose-700';
+          diffLabel.textContent = '▼ Short (कम)';
+          diffAmountEl.className = 'text-xl font-extrabold text-rose-700 tabular-nums';
+          diffAmountEl.textContent = `-${formatINR(Math.abs(difference))}`;
+        }
+      }
+
+      // =====================================================================
+      // SUBMENU DRAWER CONTROLLER
+      // =====================================================================
+      function updateNozzleToggleUI() {
+        if (!tempSettings) return;
+        const activeClass = 'min-h-[44px] rounded-lg text-xs font-extrabold transition cursor-pointer bg-slate-900 text-amber-400 shadow-xs';
+        const inactiveClass = 'min-h-[44px] rounded-lg text-xs font-extrabold transition cursor-pointer text-slate-600 hover:bg-slate-300/70';
+
+        document.getElementById('btn-noz-a-ms').className = tempSettings.nozzleA === 'MS' ? activeClass : inactiveClass;
+        document.getElementById('btn-noz-a-hsd').className = tempSettings.nozzleA === 'HSD' ? activeClass : inactiveClass;
+        document.getElementById('btn-noz-b-ms').className = tempSettings.nozzleB === 'MS' ? activeClass : inactiveClass;
+        document.getElementById('btn-noz-b-hsd').className = tempSettings.nozzleB === 'HSD' ? activeClass : inactiveClass;
+      }
+
+      function renderSubmenuExtraItems(focusLastIndex) {
+        if (!tempSettings) return;
+        const container = document.getElementById('cfg-extra-items-list');
+        container.innerHTML = '';
+
+        if (tempSettings.extraItems.length === 0) {
+          container.innerHTML = '<p class="text-xs text-slate-400 italic py-1">No extra items configured. Tap "+ Add Extra Item" above.</p>';
+          return;
+        }
+
+        tempSettings.extraItems.forEach((item, index) => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200';
+          row.innerHTML = `
+            <input
+              type="text"
+              data-cfg-extra-name="${index}"
+              value="${escapeHtml(item.name)}"
+              placeholder="Item Name (e.g. 1L Oil)"
+              class="flex-1 min-w-0 min-h-[44px] px-2.5 py-1.5 text-xs font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white"
+            />
+            <div class="relative w-24 shrink-0">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">₹</span>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="any"
+                min="0"
+                data-cfg-extra-rate="${index}"
+                value="${escapeHtml(item.rate)}"
+                placeholder="Rate"
+                class="w-full min-h-[44px] pl-6 pr-2 py-1.5 text-xs font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
+              />
+            </div>
+            <button
+              type="button"
+              data-cfg-extra-del="${index}"
+              aria-label="Delete Extra Item"
+              class="min-w-[44px] min-h-[44px] rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-extrabold text-base flex items-center justify-center shrink-0 transition cursor-pointer"
+            >✕</button>
+          `;
+          container.appendChild(row);
+        });
+
+        if (typeof focusLastIndex === 'number') {
+          const targetInput = container.querySelector(`[data-cfg-extra-name="${focusLastIndex}"]`);
+          if (targetInput) targetInput.focus();
+        }
+      }
+
+      function populateSubmenuFormFromTemp() {
+        if (!tempSettings) return;
+        document.getElementById('cfg-ms-rate').value = tempSettings.msRate;
+        document.getElementById('cfg-hsd-rate').value = tempSettings.hsdRate;
+        document.getElementById('cfg-rate-20ml').value = tempSettings.lubeRates['20ml'];
+        document.getElementById('cfg-rate-40ml').value = tempSettings.lubeRates['40ml'];
+        document.getElementById('cfg-rate-60ml').value = tempSettings.lubeRates['60ml'];
+        document.getElementById('cfg-default-test-a').value = tempSettings.defaultTestA || 0;
+        document.getElementById('cfg-default-test-b').value = tempSettings.defaultTestB || 0;
+        document.getElementById('cfg-carry-forward').checked = Boolean(tempSettings.carryForwardClosing);
+
+        updateNozzleToggleUI();
+        renderSubmenuExtraItems();
+      }
+
+      function openSubmenu() {
+        tempSettings = JSON.parse(JSON.stringify(settings));
+        populateSubmenuFormFromTemp();
+        document.getElementById('submenu-backdrop').classList.remove('hidden');
+      }
+
+      function closeSubmenu() {
+        document.getElementById('submenu-backdrop').classList.add('hidden');
+        tempSettings = null;
+      }
+
+      function syncInputsIntoTempSettings() {
+        if (!tempSettings) return;
+        const msVal = num(document.getElementById('cfg-ms-rate').value);
+        const hsdVal = num(document.getElementById('cfg-hsd-rate').value);
+
+        tempSettings.msRate = msVal > 0 ? msVal : FACTORY_DEFAULT_CONFIG.msRate;
+        tempSettings.hsdRate = hsdVal > 0 ? hsdVal : FACTORY_DEFAULT_CONFIG.hsdRate;
+        tempSettings.lubeRates['20ml'] = Math.max(0, num(document.getElementById('cfg-rate-20ml').value));
+        tempSettings.lubeRates['40ml'] = Math.max(0, num(document.getElementById('cfg-rate-40ml').value));
+        tempSettings.lubeRates['60ml'] = Math.max(0, num(document.getElementById('cfg-rate-60ml').value));
+        tempSettings.defaultTestA = Math.max(0, num(document.getElementById('cfg-default-test-a').value));
+        tempSettings.defaultTestB = Math.max(0, num(document.getElementById('cfg-default-test-b').value));
+        tempSettings.carryForwardClosing = Boolean(document.getElementById('cfg-carry-forward').checked);
+
+        tempSettings.extraItems = tempSettings.extraItems
+          .filter(item => item.name.trim() !== '')
+          .map(item => ({
+            id: item.id,
+            name: item.name.trim(),
+            rate: Math.max(0, num(item.rate))
+          }));
+      }
+
+      function handleSaveAndApplySettings() {
+        if (!tempSettings) return;
+        syncInputsIntoTempSettings();
+
+        const prevDefaultTestA = num(settings.defaultTestA);
+        const prevDefaultTestB = num(settings.defaultTestB);
+
+        settings = JSON.parse(JSON.stringify(tempSettings));
+        saveSettingsToStorage();
+
+        const curTestA = num(shiftData.totATest);
+        if (shiftData.totATest === '' || curTestA === 0 || curTestA === prevDefaultTestA) {
+          shiftData.totATest = settings.defaultTestA > 0 ? String(settings.defaultTestA) : '';
+          document.getElementById('tot-a-test').value = shiftData.totATest;
+        }
+
+        const curTestB = num(shiftData.totBTest);
+        if (shiftData.totBTest === '' || curTestB === 0 || curTestB === prevDefaultTestB) {
+          shiftData.totBTest = settings.defaultTestB > 0 ? String(settings.defaultTestB) : '';
+          document.getElementById('tot-b-test').value = shiftData.totBTest;
+        }
+
+        saveShiftToStorage();
+        renderHeaderAndBadges();
+        renderLubeItems();
+        recalculateAll();
+        closeSubmenu();
+        showToast('✓ Settings Saved & Applied!');
+      }
+
+      function handleSaveAsMyDefault() {
+        if (!tempSettings) return;
+        syncInputsIntoTempSettings();
+
+        settings = JSON.parse(JSON.stringify(tempSettings));
+        saveSettingsToStorage();
+
+        try {
+          localStorage.setItem(STORAGE_KEY_CUSTOM_DEFAULTS, JSON.stringify(settings));
+        } catch (err) {
+          console.warn('Unable to save custom defaults:', err);
+        }
+
+        renderSubmenuExtraItems();
+        renderHeaderAndBadges();
+        renderLubeItems();
+        recalculateAll();
+        showToast('★ Saved Current Settings as My Default!');
+      }
+
+      function handleRestoreFactoryDefaults() {
+        try {
+          localStorage.removeItem(STORAGE_KEY_CUSTOM_DEFAULTS);
+        } catch (err) {}
+
+        tempSettings = normalizeConfig(FACTORY_DEFAULT_CONFIG);
+        populateSubmenuFormFromTemp();
+
+        settings = JSON.parse(JSON.stringify(tempSettings));
+        saveSettingsToStorage();
+
+        renderHeaderAndBadges();
+        renderLubeItems();
+        recalculateAll();
+        showToast('↺ Factory Defaults Restored!');
+      }
+
+      // =====================================================================
+      // EVENT LISTENERS
+      // =====================================================================
+      function setupEventListeners() {
+        // 1. Submenu Open / Close
+        document.getElementById('open-submenu-btn').addEventListener('click', openSubmenu);
+        document.getElementById('strip-edit-rates-btn').addEventListener('click', openSubmenu);
+        document.getElementById('lube-edit-items-btn').addEventListener('click', openSubmenu);
+        document.getElementById('close-submenu-btn').addEventListener('click', closeSubmenu);
+
+        document.getElementById('submenu-backdrop').addEventListener('click', (e) => {
+          if (e.target.id === 'submenu-backdrop') closeSubmenu();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !document.getElementById('submenu-backdrop').classList.contains('hidden')) {
+            closeSubmenu();
+          }
+        });
+
+        // 2. Nozzle A & B Fuel Type Selector Buttons
+        ['btn-noz-a-ms', 'btn-noz-a-hsd', 'btn-noz-b-ms', 'btn-noz-b-hsd'].forEach((btnId) => {
+          document.getElementById(btnId).addEventListener('click', (e) => {
+            if (!tempSettings) return;
+            const nozzle = e.currentTarget.getAttribute('data-nozzle');
+            const fuel = e.currentTarget.getAttribute('data-fuel');
+            if (nozzle === 'A') tempSettings.nozzleA = fuel;
+            if (nozzle === 'B') tempSettings.nozzleB = fuel;
+            updateNozzleToggleUI();
+          });
+        });
+
+        // 3. Extra Items Manager inside Submenu (updates in-place without losing input focus)
+        document.getElementById('add-extra-item-btn').addEventListener('click', () => {
+          if (!tempSettings) return;
+          const newIndex = tempSettings.extraItems.length;
+          tempSettings.extraItems.push({
+            id: 'extra_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            name: '',
+            rate: 0
+          });
+          renderSubmenuExtraItems(newIndex);
+        });
+
+        const cfgExtraList = document.getElementById('cfg-extra-items-list');
+
+        cfgExtraList.addEventListener('input', (e) => {
+          if (!tempSettings) return;
+          if (e.target.hasAttribute('data-cfg-extra-name')) {
+            const idx = Number(e.target.getAttribute('data-cfg-extra-name'));
+            if (tempSettings.extraItems[idx]) {
+              tempSettings.extraItems[idx].name = e.target.value;
+            }
+          } else if (e.target.hasAttribute('data-cfg-extra-rate')) {
+            const idx = Number(e.target.getAttribute('data-cfg-extra-rate'));
+            if (tempSettings.extraItems[idx]) {
+              tempSettings.extraItems[idx].rate = e.target.value;
+            }
+          }
+        });
+
+        cfgExtraList.addEventListener('click', (e) => {
+          if (!tempSettings) return;
+          const delBtn = e.target.closest('[data-cfg-extra-del]');
+          if (delBtn) {
+            const idx = Number(delBtn.getAttribute('data-cfg-extra-del'));
+            tempSettings.extraItems.splice(idx, 1);
+            renderSubmenuExtraItems();
+          }
+        });
+
+        // 4. Default Values & Footer Buttons in Submenu
+        document.getElementById('save-custom-defaults-btn').addEventListener('click', handleSaveAsMyDefault);
+        document.getElementById('restore-factory-defaults-btn').addEventListener('click', handleRestoreFactoryDefaults);
+        document.getElementById('save-settings-btn').addEventListener('click', handleSaveAndApplySettings);
+
+        // 5. Main Screen Totalizers, Testing, Cash & UPI Inputs
+        const bindField = (id, key) => {
+          const el = document.getElementById(id);
+          el.value = shiftData[key] || '';
+          el.addEventListener('input', (e) => {
+            shiftData[key] = e.target.value;
+            recalculateAll();
+            saveShiftToStorage();
+          });
+        };
+
+        bindField('tot-a-open', 'totAOpen');
+        bindField('tot-a-close', 'totAClose');
+        bindField('tot-a-test', 'totATest');
+        bindField('tot-b-open', 'totBOpen');
+        bindField('tot-b-close', 'totBClose');
+        bindField('tot-b-test', 'totBTest');
+        bindField('input-cash', 'cash');
+        bindField('input-upi', 'upi');
+
+        // Quick Testing Preset Buttons (ONLY 0 and 5L)
+        document.querySelectorAll('[data-quick-test]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const nozzle = e.currentTarget.getAttribute('data-quick-test');
+            const val = e.currentTarget.getAttribute('data-val');
+            const displayVal = val === '0' ? '' : val;
+            if (nozzle === 'A') {
+              shiftData.totATest = displayVal;
+              document.getElementById('tot-a-test').value = displayVal;
+            } else if (nozzle === 'B') {
+              shiftData.totBTest = displayVal;
+              document.getElementById('tot-b-test').value = displayVal;
+            }
+            recalculateAll();
+            saveShiftToStorage();
+          });
+        });
+
+        // 6. Udhaar (Credit Given) Dynamic Rows
+        document.getElementById('add-udhaar-btn').addEventListener('click', () => {
+          shiftData.udhaar.push({
+            id: Date.now() + Math.floor(Math.random() * 1000),
+            name: '',
+            amount: ''
+          });
+          renderUdhaarRows();
+          saveShiftToStorage();
+          const inputs = document.querySelectorAll('[data-udhaar-name]');
+          if (inputs.length > 0) inputs[inputs.length - 1].focus();
+        });
+
+        const udhaarContainer = document.getElementById('udhaar-rows');
+        udhaarContainer.addEventListener('input', (e) => {
+          if (e.target.hasAttribute('data-udhaar-name')) {
+            const id = Number(e.target.getAttribute('data-udhaar-name'));
+            const row = shiftData.udhaar.find(r => r.id === id);
+            if (row) {
+              row.name = e.target.value;
+              saveShiftToStorage();
+            }
+          } else if (e.target.hasAttribute('data-udhaar-amount')) {
+            const id = Number(e.target.getAttribute('data-udhaar-amount'));
+            const row = shiftData.udhaar.find(r => r.id === id);
+            if (row) {
+              row.amount = e.target.value;
+              recalculateAll();
+              saveShiftToStorage();
+            }
+          }
+        });
+
+        udhaarContainer.addEventListener('click', (e) => {
+          const delBtn = e.target.closest('[data-udhaar-del]');
+          if (delBtn) {
+            const id = Number(delBtn.getAttribute('data-udhaar-del'));
+            shiftData.udhaar = shiftData.udhaar.filter(r => r.id !== id);
+            renderUdhaarRows();
+            recalculateAll();
+            saveShiftToStorage();
+          }
+        });
+
+        // 7. Udhaar Jama (Credit Recovery) Dynamic Rows
+        document.getElementById('add-udhaar-jama-btn').addEventListener('click', () => {
+          shiftData.udhaarJama.push({
+            id: Date.now() + Math.floor(Math.random() * 1000),
+            name: '',
+            amount: ''
+          });
+          renderUdhaarJamaRows();
+          saveShiftToStorage();
+          const inputs = document.querySelectorAll('[data-jama-name]');
+          if (inputs.length > 0) inputs[inputs.length - 1].focus();
+        });
+
+        const udhaarJamaContainer = document.getElementById('udhaar-jama-rows');
+        udhaarJamaContainer.addEventListener('input', (e) => {
+          if (e.target.hasAttribute('data-jama-name')) {
+            const id = Number(e.target.getAttribute('data-jama-name'));
+            const row = shiftData.udhaarJama.find(r => r.id === id);
+            if (row) {
+              row.name = e.target.value;
+              saveShiftToStorage();
+            }
+          } else if (e.target.hasAttribute('data-jama-amount')) {
+            const id = Number(e.target.getAttribute('data-jama-amount'));
+            const row = shiftData.udhaarJama.find(r => r.id === id);
+            if (row) {
+              row.amount = e.target.value;
+              recalculateAll();
+              saveShiftToStorage();
+            }
+          }
+        });
+
+        udhaarJamaContainer.addEventListener('click', (e) => {
+          const delBtn = e.target.closest('[data-jama-del]');
+          if (delBtn) {
+            const id = Number(delBtn.getAttribute('data-jama-del'));
+            shiftData.udhaarJama = shiftData.udhaarJama.filter(r => r.id !== id);
+            renderUdhaarJamaRows();
+            recalculateAll();
+            saveShiftToStorage();
+          }
+        });
+
+        // 8. Lube & Extra Items Quantity Inputs
+        const lubeContainer = document.getElementById('lube-items-list');
+        lubeContainer.addEventListener('input', (e) => {
+          if (e.target.hasAttribute('data-lube-key')) {
+            const key = e.target.getAttribute('data-lube-key');
+            shiftData.lubeQty[key] = e.target.value;
+            recalculateAll();
+            saveShiftToStorage();
+          } else if (e.target.hasAttribute('data-extra-key')) {
+            const id = e.target.getAttribute('data-extra-key');
+            shiftData.extraQty[id] = e.target.value;
+            recalculateAll();
+            saveShiftToStorage();
+          }
+        });
+
+        // 9. Reset Shift Confirmation Flow
+        const resetBar = document.getElementById('reset-confirm-bar');
+        document.getElementById('reset-shift-btn').addEventListener('click', () => {
+          resetBar.classList.remove('hidden');
+        });
+        document.getElementById('confirm-reset-no').addEventListener('click', () => {
+          resetBar.classList.add('hidden');
+        });
+        document.getElementById('confirm-reset-yes').addEventListener('click', () => {
+          const prevShiftSnapshot = JSON.parse(JSON.stringify(shiftData));
+          shiftData = createFreshShift(settings, prevShiftSnapshot);
+          saveShiftToStorage();
+
+          document.getElementById('tot-a-open').value = shiftData.totAOpen;
+          document.getElementById('tot-a-close').value = '';
+          document.getElementById('tot-a-test').value = shiftData.totATest;
+          document.getElementById('tot-b-open').value = shiftData.totBOpen;
+          document.getElementById('tot-b-close').value = '';
+          document.getElementById('tot-b-test').value = shiftData.totBTest;
+          document.getElementById('input-cash').value = '';
+          document.getElementById('input-upi').value = '';
+
+          renderUdhaarRows();
+          renderUdhaarJamaRows();
+          renderLubeItems();
+          recalculateAll();
+          resetBar.classList.add('hidden');
+          document.getElementById('whatsapp-share-strip').classList.add('hidden');
+          showToast(settings.carryForwardClosing
+            ? '✓ नया शिफ्ट शुरू (Closing → Opening Carried Forward)'
+            : '✓ नया शिफ्ट शुरू (Defaults Applied)'
+          );
+        });
+
+        // 10. Copy / WhatsApp Summary Report
+        document.getElementById('copy-summary-btn').addEventListener('click', copyFormattedSummary);
+      }
+
+      // =====================================================================
+      // WHATSAPP / CLIPBOARD REPORT GENERATOR
+      // =====================================================================
+      function copyFormattedSummary() {
+        const msRate = num(settings.msRate);
+        const hsdRate = num(settings.hsdRate);
+
+        const grossA = Math.max(0, num(shiftData.totAClose) - num(shiftData.totAOpen));
+        const testA = Math.max(0, num(shiftData.totATest));
+        const diffA = Math.max(0, grossA - testA);
+        const rateA = settings.nozzleA === 'MS' ? msRate : hsdRate;
+        const amtA = diffA * rateA;
+
+        const grossB = Math.max(0, num(shiftData.totBClose) - num(shiftData.totBOpen));
+        const testB = Math.max(0, num(shiftData.totBTest));
+        const diffB = Math.max(0, grossB - testB);
+        const rateB = settings.nozzleB === 'MS' ? msRate : hsdRate;
+        const amtB = diffB * rateB;
+
+        const totalTesting = testA + testB;
+        const totalFuel = amtA + amtB;
+
+        const lubeLines = [];
+        let totalLube = 0;
+        ['20ml', '40ml', '60ml'].forEach((k) => {
+          const q = num(shiftData.lubeQty[k]);
+          const r = num(settings.lubeRates[k]);
+          if (q > 0) {
+            lubeLines.push(`  • ${k} × ${q} = ₹${(q * r).toFixed(2)}`);
+            totalLube += q * r;
+          }
+        });
+        settings.extraItems.forEach((ex) => {
+          const q = num(shiftData.extraQty[ex.id]);
+          const r = num(ex.rate);
+          if (q > 0) {
+            lubeLines.push(`  • ${ex.name} × ${q} = ₹${(q * r).toFixed(2)}`);
+            totalLube += q * r;
+          }
+        });
+
+        const udhaarLines = [];
+        let totalUdhaar = 0;
+        shiftData.udhaar.forEach((u) => {
+          const amt = num(u.amount);
+          if (amt > 0 || u.name.trim()) {
+            udhaarLines.push(`  • ${u.name.trim() || 'Party'}: ₹${amt.toFixed(2)}`);
+            totalUdhaar += amt;
+          }
+        });
+
+        const udhaarJamaLines = [];
+        let totalUdhaarJama = 0;
+        shiftData.udhaarJama.forEach((u) => {
+          const amt = num(u.amount);
+          if (amt > 0 || u.name.trim()) {
+            udhaarJamaLines.push(`  • ${u.name.trim() || 'Party'}: ₹${amt.toFixed(2)}`);
+            totalUdhaarJama += amt;
+          }
+        });
+
+        const cash = num(shiftData.cash);
+        const upi = num(shiftData.upi);
+        const totalSale = totalFuel + totalLube;
+        const totalExpected = totalSale + totalUdhaarJama;
+        const totalAccounted = cash + upi + totalUdhaar;
+        const diff = totalAccounted - totalExpected;
+
+        const todayStr = new Date().toLocaleDateString('en-IN', {
+          day: '2-digit', month: 'short', year: 'numeric'
+        });
+
+        const lines = [
+          `⛽ *पंप शिफ्ट हिसाब (${todayStr})*`,
+          `------------------------`,
+          `*Totalizer-A (${settings.nozzleA} @ ₹${rateA}):*`,
+          `  Open: ${shiftData.totAOpen || 0} | Close: ${shiftData.totAClose || 0}`,
+          ...(testA > 0 ? [`  Gross: ${grossA.toFixed(2)} L | Testing: ${testA.toFixed(2)} L`] : []),
+          `  Net A: ${diffA.toFixed(2)} L = ₹${amtA.toFixed(2)}`,
+          `*Totalizer-B (${settings.nozzleB} @ ₹${rateB}):*`,
+          `  Open: ${shiftData.totBOpen || 0} | Close: ${shiftData.totBClose || 0}`,
+          ...(testB > 0 ? [`  Gross: ${grossB.toFixed(2)} L | Testing: ${testB.toFixed(2)} L`] : []),
+          `  Net B: ${diffB.toFixed(2)} L = ₹${amtB.toFixed(2)}`,
+          ...(totalTesting > 0 ? [`*Total Testing Deducted:* ${totalTesting.toFixed(2)} L`] : []),
+          `*Total Net Sale Liter:* ${(diffA + diffB).toFixed(2)} L`,
+          `*Fuel Amount:* ₹${totalFuel.toFixed(2)}`,
+          lubeLines.length > 0 ? `*Lube / Extra (₹${totalLube.toFixed(2)}):*\n${lubeLines.join('\n')}` : `*Lube / Extra:* ₹0.00`,
+          `------------------------`,
+          `*कुल बिक्री (Total Sale):* ₹${totalSale.toFixed(2)}`,
+          `*(+) उधार जमा (Credit Recovery):* ₹${totalUdhaarJama.toFixed(2)}`,
+          ...(udhaarJamaLines.length > 0 ? udhaarJamaLines : []),
+          `*कुल हिसाब योग्य (Expected): ₹${totalExpected.toFixed(2)}*`,
+          `------------------------`,
+          `• Cash: ₹${cash.toFixed(2)}`,
+          `• UPI/PayTM: ₹${upi.toFixed(2)}`,
+          `• उधार दिया: ₹${totalUdhaar.toFixed(2)}`,
+          ...(udhaarLines.length > 0 ? udhaarLines : []),
+          `*कुल जमा (Accounted): ₹${totalAccounted.toFixed(2)}*`,
+          `*अंतर (Diff): ${Math.abs(diff) < 0.01 ? '₹0.00 (बराबर ✓)' : (diff > 0 ? '+₹' + diff.toFixed(2) + ' (Excess)' : '-₹' + Math.abs(diff).toFixed(2) + ' (Short)')}*`
+        ];
+
+        const summaryText = lines.join('\n');
+        const tempArea = document.createElement('textarea');
+        tempArea.value = summaryText;
+        tempArea.style.position = 'fixed';
+        tempArea.style.opacity = '0';
+        document.body.appendChild(tempArea);
+        tempArea.select();
+        try {
+          document.execCommand('copy');
+          showToast('✓ हिसाब कॉपी हो गया! WhatsApp पर Paste करें');
+        } catch (err) {
+          showToast('Copy failed');
+        }
+        document.body.removeChild(tempArea);
+
+        // Reveal direct WhatsApp launch link
+        const waStrip = document.getElementById('whatsapp-share-strip');
+        const waLink = document.getElementById('whatsapp-direct-link');
+        if (waStrip && waLink) {
+          waLink.href = 'https://wa.me/?text=' + encodeURIComponent(summaryText);
+          waStrip.classList.remove('hidden');
+        }
+      }
+
+      // =====================================================================
+      // INITIALIZE APP
+      // =====================================================================
+      function init() {
+        const dateBadge = document.getElementById('shift-date-badge');
+        if (dateBadge) {
+          dateBadge.textContent = new Date().toLocaleDateString('en-IN', {
+            day: '2-digit', month: 'short', year: 'numeric'
+          });
+        }
+
+        setupOfflineAndInstallSupport();
+        renderHeaderAndBadges();
+        setupEventListeners();
+        renderUdhaarRows();
+        renderUdhaarJamaRows();
+        renderLubeItems();
+        recalculateAll();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
       } else {
-        banner.className = 'diff-banner diff-excess';
-        banner.textContent = `ज्यादा है (Excess): +₹${diff.toFixed(2)}`;
+        init();
       }
-    }
-
-    function openModal() {
-      document.getElementById('cfg-rate-ms').value = state.rateMS;
-      document.getElementById('cfg-rate-hsd').value = state.rateHSD;
-      document.getElementById('cfg-test-a').value = state.defaultTestA;
-      document.getElementById('cfg-test-b').value = state.defaultTestB;
-      document.getElementById('submenu-modal').classList.add('open');
-    }
-
-    function closeModal() {
-      document.getElementById('submenu-modal').classList.remove('open');
-    }
-
-    function saveSettings() {
-      state.rateMS = parseFloat(document.getElementById('cfg-rate-ms').value) || state.rateMS;
-      state.rateHSD = parseFloat(document.getElementById('cfg-rate-hsd').value) || state.rateHSD;
-      state.defaultTestA = parseFloat(document.getElementById('cfg-test-a').value) || 0;
-      state.defaultTestB = parseFloat(document.getElementById('cfg-test-b').value) || 0;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      updateRateLabels();
-      setTesting('a', state.defaultTestA);
-      setTesting('b', state.defaultTestB);
-      closeModal();
-    }
-
-    function nextShift() {
-      if (!confirm('क्या आप अगली शिफ्ट शुरू करना चाहते हैं? (Closing रीडिंग को Opening में सेट किया जाएगा)')) return;
-      const closeA = document.getElementById('close-a').value;
-      const closeB = document.getElementById('close-b').value;
-      if (closeA) document.getElementById('open-a').value = closeA;
-      if (closeB) document.getElementById('open-b').value = closeB;
-      document.getElementById('close-a').value = '';
-      document.getElementById('close-b').value = '';
-      document.getElementById('cash-amt').value = '';
-      document.getElementById('upi-amt').value = '';
-      ['extra-list', 'credit-list', 'recovery-list', 'expense-list'].forEach(id => {
-        document.getElementById(id).innerHTML = '';
-        addRow(id);
-      });
-      setTesting('a', state.defaultTestA);
-      setTesting('b', state.defaultTestB);
-      calculate();
-    }
-
-    function copyReport() {
-      const date = new Date().toLocaleString('hi-IN');
-      const text = [
-        `⛽ पंप शिफ्ट हिसाब (${date})`,
-        `MS Net: ${document.getElementById('net-a').textContent} (${document.getElementById('amt-a').textContent})`,
-        `HSD Net: ${document.getElementById('net-b').textContent} (${document.getElementById('amt-b').textContent})`,
-        `कुल फ्यूल बिक्री: ${document.getElementById('total-fuel-amt').textContent}`,
-        `कुल लेने योग्य: ${document.getElementById('sum-expected').textContent}`,
-        `कुल जमा हिसाब: ${document.getElementById('sum-accounted').textContent}`,
-        `स्थिति: ${document.getElementById('diff-banner').textContent}`
-      ].join('\n');
-      navigator.clipboard?.writeText(text);
-      alert('शिफ्ट रिपोर्ट कॉपी हो गई है!');
-    }
-
-    document.getElementById('open-submenu-btn').addEventListener('click', openModal);
-
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
-      });
-    }
-
-    // Handle Android PWA Install Prompt
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('install-banner').style.display = 'flex';
-    });
-
-    document.getElementById('install-btn').addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        document.getElementById('install-banner').style.display = 'none';
-      }
-      deferredPrompt = null;
-    });
-
-    // Init default rows
-    loadState();
-    ['extra-list', 'credit-list', 'recovery-list', 'expense-list'].forEach(id => addRow(id));
-    calculate();
+    })();
   </script>
 </body>
 </html>
