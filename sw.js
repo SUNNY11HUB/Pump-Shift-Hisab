@@ -1,5 +1,26 @@
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
-  );
-});
+{
+  "id": "/Pump-Shift-Hisab/",
+  "name": "पंप शिफ्ट हिसाब",
+  "short_name": "पंप हिसाब",
+  "description": "Fuel Pump Shift Sales & Cash Reconciliation Calculator",
+  "start_url": "/Pump-Shift-Hisab/",
+  "scope": "/Pump-Shift-Hisab/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
