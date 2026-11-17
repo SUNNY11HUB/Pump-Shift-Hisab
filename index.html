@@ -3,18 +3,183 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="पंप हिसाब" />
   <title>पंप शिफ्ट हिसाब - Fuel Shift Hisab</title>
+
+  <!-- Dynamic PWA Manifest & PNG App Icon Generator (Runs Immediately in Head) -->
+  <script>
+    (function setupPWAManifestAndIcons() {
+      try {
+        function drawPumpIconDataURL(size) {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          const r = size * 0.22;
+
+          // Rounded Square Background with Amber-Orange Gradient
+          ctx.beginPath();
+          ctx.moveTo(r, 0);
+          ctx.lineTo(size - r, 0);
+          ctx.quadraticCurveTo(size, 0, size, r);
+          ctx.lineTo(size, size - r);
+          ctx.quadraticCurveTo(size, size, size - r, size);
+          ctx.lineTo(r, size);
+          ctx.quadraticCurveTo(0, size, 0, size - r);
+          ctx.lineTo(0, r);
+          ctx.quadraticCurveTo(0, 0, r, 0);
+          ctx.closePath();
+
+          const grad = ctx.createLinearGradient(0, 0, size, size);
+          grad.addColorStop(0, '#f59e0b');
+          grad.addColorStop(1, '#ea580c');
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // Subtle Inner Border
+          ctx.lineWidth = Math.max(2, size * 0.02);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+          ctx.stroke();
+
+          // Crisp White Fuel Dispenser Body
+          const padX = size * 0.27;
+          const bodyTop = size * 0.17;
+          const bodyW = size * 0.34;
+          const bodyH = size * 0.56;
+          const br = size * 0.045;
+
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.roundRect ? ctx.roundRect(padX, bodyTop, bodyW, bodyH, br) : ctx.rect(padX, bodyTop, bodyW, bodyH);
+          ctx.fill();
+
+          // Dispenser Display Screen
+          ctx.fillStyle = '#0f172a';
+          const scrPad = size * 0.045;
+          const scrH = size * 0.17;
+          ctx.beginPath();
+          ctx.roundRect
+            ? ctx.roundRect(padX + scrPad, bodyTop + scrPad, bodyW - scrPad * 2, scrH, size * 0.02)
+            : ctx.rect(padX + scrPad, bodyTop + scrPad, bodyW - scrPad * 2, scrH);
+          ctx.fill();
+
+          // Dispenser Base Pedestal
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(padX - size * 0.04, bodyTop + bodyH - size * 0.02, bodyW + size * 0.08, size * 0.065);
+
+          // Fuel Hose & Nozzle on Right
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = size * 0.042;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          ctx.moveTo(padX + bodyW, bodyTop + bodyH * 0.42);
+          ctx.lineTo(padX + bodyW + size * 0.08, bodyTop + bodyH * 0.42);
+          ctx.lineTo(padX + bodyW + size * 0.08, bodyTop + bodyH * 0.78);
+          ctx.quadraticCurveTo(padX + bodyW + size * 0.08, bodyTop + bodyH * 0.90, padX + bodyW + size * 0.14, bodyTop + bodyH * 0.90);
+          ctx.quadraticCurveTo(padX + bodyW + size * 0.19, bodyTop + bodyH * 0.90, padX + bodyW + size * 0.19, bodyTop + bodyH * 0.74);
+          ctx.lineTo(padX + bodyW + size * 0.19, bodyTop + bodyH * 0.30);
+          ctx.lineTo(padX + bodyW + size * 0.13, bodyTop + bodyH * 0.16);
+          ctx.stroke();
+
+          // Dark Slate Bottom Pill Badge ("हिसाब")
+          const badgeW = size * 0.68;
+          const badgeH = size * 0.16;
+          const badgeX = (size - badgeW) / 2;
+          const badgeY = size * 0.77;
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.roundRect ? ctx.roundRect(badgeX, badgeY, badgeW, badgeH, badgeH / 2) : ctx.rect(badgeX, badgeY, badgeW, badgeH);
+          ctx.fill();
+
+          ctx.fillStyle = '#fbbf24';
+          ctx.font = '800 ' + Math.round(size * 0.105) + 'px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('हिसाब', size / 2, badgeY + badgeH / 2 + size * 0.006);
+
+          return canvas.toDataURL('image/png');
+        }
+
+        const icon192 = drawPumpIconDataURL(192);
+        const icon512 = drawPumpIconDataURL(512);
+
+        // Inject Apple Touch Icon & Favicon
+        const appleLink = document.createElement('link');
+        appleLink.rel = 'apple-touch-icon';
+        appleLink.href = icon192;
+        document.head.appendChild(appleLink);
+
+        const favLink = document.createElement('link');
+        favLink.rel = 'icon';
+        favLink.type = 'image/png';
+        favLink.href = icon192;
+        document.head.appendChild(favLink);
+
+        // Build Web App Manifest with Full Start URL & Scope
+        const cleanStartUrl = window.location.href.split('?')[0].split('#')[0];
+        const scopeUrl = cleanStartUrl.substring(0, cleanStartUrl.lastIndexOf('/') + 1);
+
+        const manifestObj = {
+          name: 'पंप शिफ्ट हिसाब',
+          short_name: 'पंप हिसाब',
+          description: 'Fuel Pump Shift Sales, Testing & Cash Reconciliation Calculator',
+          start_url: cleanStartUrl,
+          scope: scopeUrl,
+          display: 'standalone',
+          orientation: 'portrait',
+          background_color: '#0f172a',
+          theme_color: '#0f172a',
+          icons: [
+            {
+              src: icon192,
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any maskable'
+            },
+            {
+              src: icon512,
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable'
+            }
+          ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = manifestURL;
+        document.head.appendChild(manifestLink);
+      } catch (err) {
+        console.warn('PWA Manifest setup warning:', err);
+      }
+    })();
+  </script>
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & Noto Sans Devanagari -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
   <style>
+    /* Core Typography & Base Fallbacks (Works even if external CDNs are offline) */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
     body {
-      font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+      margin: 0;
+      font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
       background-color: #e2e8f0;
+      color: #1e293b;
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
@@ -26,6 +191,17 @@
     }
     .tabular-nums {
       font-variant-numeric: tabular-nums;
+    }
+    .hidden {
+      display: none !important;
+    }
+    /* Offline-safe layout fallback guarantees if Tailwind CDN fails to load */
+    .app-shell {
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 100vh;
+      background-color: #f8fafc;
     }
   </style>
 </head>
@@ -39,7 +215,7 @@
   </div>
 
   <!-- Main Mobile-First Container -->
-  <div class="max-w-md mx-auto min-h-screen bg-slate-50 shadow-lg sm:my-4 sm:rounded-3xl sm:border sm:border-slate-300 overflow-hidden flex flex-col">
+  <div class="app-shell max-w-md mx-auto min-h-screen bg-slate-50 shadow-lg sm:my-4 sm:rounded-3xl sm:border sm:border-slate-300 overflow-hidden flex flex-col">
 
     <!-- 1. TOP HEADER & SUBMENU TRIGGER -->
     <header class="sticky top-0 z-30 bg-slate-900 text-white shadow-md">
@@ -54,7 +230,6 @@
           </div>
         </div>
 
-        <!-- Submenu Button (☰) -->
         <!-- Submenu Button (4 Horizontal Lines Only) -->
         <button
           id="open-submenu-btn"
@@ -90,6 +265,34 @@
           Edit Rates →
         </button>
       </div>
+
+      <!-- Dismissible PWA Install App Banner (Appears when browser supports direct install) -->
+      <div id="pwa-install-banner" class="hidden bg-amber-500 text-slate-950 px-3.5 py-2 flex items-center justify-between gap-2 border-t border-amber-400">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-base shrink-0">📲</span>
+          <div class="min-w-0">
+            <p class="text-xs font-extrabold leading-tight truncate">Install App (ऐप इंस्टॉल करें)</p>
+            <p class="text-[10px] font-semibold text-slate-900/80 truncate">होम स्क्रीन पर जोड़ें • बिना इंटरनेट चलाएं</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button
+            id="pwa-install-btn"
+            type="button"
+            class="min-h-[34px] px-3 py-1 rounded-lg bg-slate-900 text-amber-400 text-xs font-extrabold shadow-xs active:scale-95 transition cursor-pointer"
+          >
+            Install
+          </button>
+          <button
+            id="pwa-dismiss-btn"
+            type="button"
+            aria-label="Dismiss Install Banner"
+            class="w-8 h-8 rounded-lg hover:bg-amber-600/40 text-slate-950 font-extrabold text-sm flex items-center justify-center cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
     </header>
 
     <!-- MAIN CONTENT BODY -->
@@ -119,7 +322,7 @@
                 id="tot-a-open"
                 type="number"
                 inputmode="decimal"
-                step="any"
+                step="0.01"
                 placeholder="0.00"
                 class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
               />
@@ -133,7 +336,7 @@
                 id="tot-a-close"
                 type="number"
                 inputmode="decimal"
-                step="any"
+                step="0.01"
                 placeholder="0.00"
                 class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
               />
@@ -167,7 +370,7 @@
                   inputmode="decimal"
                   step="0.01"
                   min="0"
-                  placeholder="0.0"
+                  placeholder="0.00"
                   class="w-full min-h-[36px] pl-1.5 pr-4 py-1 text-xs font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
                 />
                 <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 pointer-events-none">L</span>
@@ -221,7 +424,7 @@
                 id="tot-b-open"
                 type="number"
                 inputmode="decimal"
-                step="any"
+                step="0.01"
                 placeholder="0.00"
                 class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
               />
@@ -235,7 +438,7 @@
                 id="tot-b-close"
                 type="number"
                 inputmode="decimal"
-                step="any"
+                step="0.01"
                 placeholder="0.00"
                 class="w-full min-h-[44px] px-3 py-2 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
               />
@@ -269,7 +472,7 @@
                   inputmode="decimal"
                   step="0.01"
                   min="0"
-                  placeholder="0.0"
+                  placeholder="0.00"
                   class="w-full min-h-[36px] pl-1.5 pr-4 py-1 text-xs font-bold text-right text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white tabular-nums"
                 />
                 <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 pointer-events-none">L</span>
@@ -508,14 +711,14 @@
         <div id="diff-status-box" class="rounded-xl p-3.5 bg-emerald-50 border border-emerald-200 flex items-center justify-between transition-colors">
           <div>
             <span class="text-[11px] font-extrabold uppercase tracking-wide block text-slate-500">अंतर / हिसाब (Status)</span>
-            <span id="diff-status-label" class="text-xs font-extrabold text-emerald-700">✓ हिसाब बराबर (Matched)</span>
+            <span id="diff-status-label" class="text-xs font-extrabold text-emerald-700">हिसाब बराबर ✓</span>
           </div>
           <div id="summary-diff-amount" class="text-xl font-extrabold text-emerald-700 tabular-nums">
             ₹0.00
           </div>
         </div>
 
-        <!-- Bottom Action Bar: WhatsApp / Copy & Reset Shift -->
+        <!-- Bottom Action Bar: Copy / WhatsApp & Reset Shift -->
         <div class="grid grid-cols-2 gap-2.5 pt-1">
           <button
             id="copy-summary-btn"
@@ -525,7 +728,7 @@
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
             </svg>
-            WhatsApp / Copy
+            Copy / WhatsApp
           </button>
 
           <button
@@ -538,6 +741,19 @@
             </svg>
             नया शिफ्ट (Reset)
           </button>
+        </div>
+
+        <!-- Direct WhatsApp Launch Strip (Appears after Copy) -->
+        <div id="whatsapp-share-strip" class="hidden pt-0.5">
+          <a
+            id="whatsapp-direct-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="min-h-[44px] w-full py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs flex items-center justify-center gap-2 transition"
+          >
+            <span>💬 सीधे WhatsApp में भेजें (Open WhatsApp) →</span>
+          </a>
         </div>
 
         <!-- Inline Reset Shift Confirmation Box -->
@@ -576,7 +792,12 @@
       <!-- Drawer Header -->
       <div class="bg-slate-900 text-white px-4 py-3.5 flex items-center justify-between shrink-0">
         <div>
-          <h2 class="text-base font-extrabold">Submenu / रेट और डिफ़ॉल्ट सेटिंग्स</h2>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-extrabold">रेट और डिफ़ॉल्ट सेटिंग्स</h2>
+            <span id="offline-status-badge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+              ● ऑफ़लाइन तैयार
+            </span>
+          </div>
           <p class="text-xs text-slate-400">Rates, Nozzles, Extra Items & Default Values</p>
         </div>
         <button
@@ -833,15 +1054,18 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- CLEAN, SELF-CONTAINED APPLICATION SCRIPT                              -->
+  <!-- APPLICATION LOGIC, PWA INSTALL PROMPT & OFFLINE CACHING               -->
   <!-- ===================================================================== -->
   <script>
     (function () {
       'use strict';
 
+      // Storage Keys (includes automatic backward migration from earlier versions)
       const STORAGE_KEY_SETTINGS = 'pump_hisab_settings_v6';
+      const LEGACY_SETTINGS_KEYS = ['pump_hisab_config_v3', 'pump_hisab_config_v2', 'pump_hisab_settings_v5'];
       const STORAGE_KEY_CUSTOM_DEFAULTS = 'pump_hisab_custom_defaults_v6';
       const STORAGE_KEY_SHIFT = 'pump_hisab_shift_v6';
+      const LEGACY_SHIFT_KEYS = ['pump_hisab_shift_v3', 'pump_hisab_shift_v2', 'pump_hisab_shift_v5'];
 
       const FACTORY_DEFAULT_CONFIG = {
         msRate: 105.98,
@@ -928,6 +1152,15 @@
           if (raw) {
             return normalizeConfig(JSON.parse(raw));
           }
+          // Check legacy keys so existing saved rates on GitHub Pages are preserved
+          for (let i = 0; i < LEGACY_SETTINGS_KEYS.length; i++) {
+            const legacyRaw = localStorage.getItem(LEGACY_SETTINGS_KEYS[i]);
+            if (legacyRaw) {
+              const migrated = normalizeConfig(JSON.parse(legacyRaw));
+              localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(migrated));
+              return migrated;
+            }
+          }
         } catch (err) {
           console.warn('Error loading settings:', err);
         }
@@ -969,7 +1202,16 @@
       function loadShiftData() {
         const fallback = createFreshShift(settings, null);
         try {
-          const raw = localStorage.getItem(STORAGE_KEY_SHIFT);
+          let raw = localStorage.getItem(STORAGE_KEY_SHIFT);
+          if (!raw) {
+            for (let i = 0; i < LEGACY_SHIFT_KEYS.length; i++) {
+              const legacyRaw = localStorage.getItem(LEGACY_SHIFT_KEYS[i]);
+              if (legacyRaw) {
+                raw = legacyRaw;
+                break;
+              }
+            }
+          }
           if (raw) {
             const parsed = JSON.parse(raw);
             if (parsed && typeof parsed === 'object') {
@@ -1025,6 +1267,112 @@
         } catch (err) {
           console.warn('Unable to save shift data:', err);
         }
+      }
+
+      // =====================================================================
+      // PWA INSTALL PROMPT & OFFLINE CACHE INITIALIZATION
+      // =====================================================================
+      let deferredInstallPrompt = null;
+
+      function setupOfflineAndInstallSupport() {
+        const installBanner = document.getElementById('pwa-install-banner');
+        const installBtn = document.getElementById('pwa-install-btn');
+        const dismissBtn = document.getElementById('pwa-dismiss-btn');
+        const offlineBadge = document.getElementById('offline-status-badge');
+
+        // Listen for Chrome/Android PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredInstallPrompt = e;
+          if (installBanner) {
+            installBanner.classList.remove('hidden');
+          }
+        });
+
+        window.addEventListener('appinstalled', () => {
+          deferredInstallPrompt = null;
+          if (installBanner) installBanner.classList.add('hidden');
+          showToast('✓ ऐप इंस्टॉल हो गया!');
+        });
+
+        if (installBtn) {
+          installBtn.addEventListener('click', async () => {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            try {
+              const choiceResult = await deferredInstallPrompt.userChoice;
+              if (choiceResult && choiceResult.outcome === 'accepted') {
+                showToast('✓ ऐप इंस्टॉल हो रहा है...');
+              }
+            } catch (err) {}
+            deferredInstallPrompt = null;
+            if (installBanner) installBanner.classList.add('hidden');
+          });
+        }
+
+        if (dismissBtn) {
+          dismissBtn.addEventListener('click', () => {
+            if (installBanner) installBanner.classList.add('hidden');
+          });
+        }
+
+        // Pre-cache current page and Tailwind CDN via Cache API for offline resilience
+        if ('caches' in window) {
+          caches.open('pump-hisab-v1').then((cache) => {
+            const urlsToCache = [
+              window.location.href.split('#')[0],
+              'https://cdn.tailwindcss.com'
+            ];
+            urlsToCache.forEach((url) => {
+              fetch(url, { mode: url.startsWith(window.location.origin) ? 'same-origin' : 'no-cors' })
+                .then((res) => {
+                  if (res) cache.put(url, res);
+                })
+                .catch(() => {});
+            });
+          }).catch(() => {});
+        }
+
+        // Attempt Blob Service Worker registration (safely caught if browser restricts Blob SW scope)
+        if ('serviceWorker' in navigator) {
+          try {
+            const swCode = [
+              "const CACHE_NAME = 'pump-hisab-v1';",
+              "self.addEventListener('install', (e) => { self.skipWaiting(); });",
+              "self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });",
+              "self.addEventListener('fetch', (e) => {",
+              "  if (e.request.method !== 'GET') return;",
+              "  e.respondWith(",
+              "    fetch(e.request).then((res) => {",
+              "      const copy = res.clone();",
+              "      caches.open(CACHE_NAME).then((c) => c.put(e.request, copy)).catch(() => {});",
+              "      return res;",
+              "    }).catch(() => caches.match(e.request))",
+              "  );",
+              "});"
+            ].join('\n');
+            const swBlob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+            navigator.serviceWorker.register(swUrl).catch(() => {});
+          } catch (err) {
+            // Silently ignore Blob SW restriction in browsers that require same-origin script URLs
+          }
+        }
+
+        // Live Online / Offline Status Indicator inside Submenu
+        function updateConnectionBadge() {
+          if (!offlineBadge) return;
+          if (navigator.onLine) {
+            offlineBadge.textContent = '● ऑफ़लाइन तैयार';
+            offlineBadge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40';
+          } else {
+            offlineBadge.textContent = '● Offline Mode';
+            offlineBadge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40';
+          }
+        }
+        updateConnectionBadge();
+        window.addEventListener('online', updateConnectionBadge);
+        window.addEventListener('offline', updateConnectionBadge);
       }
 
       // Application State
@@ -1366,19 +1714,19 @@
         if (Math.abs(difference) < 0.01) {
           diffBox.className = 'rounded-xl p-3.5 bg-emerald-50 border border-emerald-200 flex items-center justify-between transition-colors';
           diffLabel.className = 'text-xs font-extrabold text-emerald-700';
-          diffLabel.textContent = '✓ हिसाब बराबर (Matched)';
+          diffLabel.textContent = 'हिसाब बराबर ✓';
           diffAmountEl.className = 'text-xl font-extrabold text-emerald-700 tabular-nums';
           diffAmountEl.textContent = '₹0.00';
         } else if (difference > 0) {
           diffBox.className = 'rounded-xl p-3.5 bg-amber-50 border border-amber-300 flex items-center justify-between transition-colors';
           diffLabel.className = 'text-xs font-extrabold text-amber-800';
-          diffLabel.textContent = '▲ ज़्यादा जमा (Excess)';
+          diffLabel.textContent = '▲ Excess (ज्यादा)';
           diffAmountEl.className = 'text-xl font-extrabold text-amber-700 tabular-nums';
           diffAmountEl.textContent = `+${formatINR(difference)}`;
         } else {
           diffBox.className = 'rounded-xl p-3.5 bg-rose-50 border border-rose-300 flex items-center justify-between transition-colors';
           diffLabel.className = 'text-xs font-extrabold text-rose-700';
-          diffLabel.textContent = '▼ कम जमा (Short / कम)';
+          diffLabel.textContent = '▼ Short (कम)';
           diffAmountEl.className = 'text-xl font-extrabold text-rose-700 tabular-nums';
           diffAmountEl.textContent = `-${formatINR(Math.abs(difference))}`;
         }
@@ -1565,7 +1913,7 @@
       }
 
       // =====================================================================
-      // EVENT LISTENERS (SINGLE-PASS, CLEAN DELEGATION)
+      // EVENT LISTENERS
       // =====================================================================
       function setupEventListeners() {
         // 1. Submenu Open / Close
@@ -1596,7 +1944,7 @@
           });
         });
 
-        // 3. Extra Items Manager inside Submenu
+        // 3. Extra Items Manager inside Submenu (updates in-place without losing input focus)
         document.getElementById('add-extra-item-btn').addEventListener('click', () => {
           if (!tempSettings) return;
           const newIndex = tempSettings.extraItems.length;
@@ -1809,13 +2157,14 @@
           renderLubeItems();
           recalculateAll();
           resetBar.classList.add('hidden');
+          document.getElementById('whatsapp-share-strip').classList.add('hidden');
           showToast(settings.carryForwardClosing
             ? '✓ नया शिफ्ट शुरू (Closing → Opening Carried Forward)'
             : '✓ नया शिफ्ट शुरू (Defaults Applied)'
           );
         });
 
-        // 10. WhatsApp / Copy Summary Report
+        // 10. Copy / WhatsApp Summary Report
         document.getElementById('copy-summary-btn').addEventListener('click', copyFormattedSummary);
       }
 
@@ -1917,7 +2266,7 @@
           `• उधार दिया: ₹${totalUdhaar.toFixed(2)}`,
           ...(udhaarLines.length > 0 ? udhaarLines : []),
           `*कुल जमा (Accounted): ₹${totalAccounted.toFixed(2)}*`,
-          `*अंतर (Diff): ${Math.abs(diff) < 0.01 ? '₹0.00 (बराबर)' : (diff > 0 ? '+₹' + diff.toFixed(2) + ' (Excess)' : '-₹' + Math.abs(diff).toFixed(2) + ' (Short)')}*`
+          `*अंतर (Diff): ${Math.abs(diff) < 0.01 ? '₹0.00 (बराबर ✓)' : (diff > 0 ? '+₹' + diff.toFixed(2) + ' (Excess)' : '-₹' + Math.abs(diff).toFixed(2) + ' (Short)')}*`
         ];
 
         const summaryText = lines.join('\n');
@@ -1934,6 +2283,14 @@
           showToast('Copy failed');
         }
         document.body.removeChild(tempArea);
+
+        // Reveal direct WhatsApp launch link
+        const waStrip = document.getElementById('whatsapp-share-strip');
+        const waLink = document.getElementById('whatsapp-direct-link');
+        if (waStrip && waLink) {
+          waLink.href = 'https://wa.me/?text=' + encodeURIComponent(summaryText);
+          waStrip.classList.remove('hidden');
+        }
       }
 
       // =====================================================================
@@ -1947,6 +2304,7 @@
           });
         }
 
+        setupOfflineAndInstallSupport();
         renderHeaderAndBadges();
         setupEventListeners();
         renderUdhaarRows();
